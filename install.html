@@ -1237,7 +1237,7 @@ function lsSet(key, val) {
   const _p = new URLSearchParams(location.search);
   const _appKey = _p.get('app') || localStorage.getItem('fa_last_app');
   const _swFile = _appKey === 'driver' ? 'sw_driver-pwa_public.js' : 'sw.js';
-  navigator.serviceWorker.register(_swFile, { scope: './', updateViaCache: 'none' })
+  navigator.serviceWorker.register(_swFile, { scope: '/', updateViaCache: 'none' })
     .then(reg => {
       console.log('[FA] SW registered early:', _swFile, reg.scope);
       // Try to update immediately in background
@@ -1264,7 +1264,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const appParam  = params.get('app');
   const pageParam = params.get('page');
   if (appParam === 'admin' || appParam === 'driver') {
-    launchApp(appParam);
+    window.launchApp(appParam);
     if (pageParam) {
       if (appParam === 'admin')  showAdminPage(pageParam);
       if (appParam === 'driver') showDriverPage(pageParam);
@@ -1424,7 +1424,7 @@ function handleLaunch() {
   if (!selectedApp) { showToast('Select an app first'); return; }
   const lsKey = selectedApp === 'admin' ? LS_ADMIN : LS_DRIVER;
   // Already installed — launch straight away
-  if (lsGet(lsKey)) { launchApp(selectedApp); return; }
+  if (lsGet(lsKey)) { window.launchApp(selectedApp); return; }
   // Native browser install prompt available (Chrome/Android)
   if (deferredPrompt) {
     const btn = document.getElementById('oti-btn');
@@ -1471,7 +1471,7 @@ function doInBrowserInstall(appKey) {
           .then(regs => {
             const ex = regs.find(r => r.active?.scriptURL?.includes(swFile));
             if (ex) { ex.update().catch(()=>{}); return ex; }
-            return navigator.serviceWorker.register(swFile, { scope: './', updateViaCache: 'none' });
+            return navigator.serviceWorker.register(swFile, { scope: '/', updateViaCache: 'none' });
           }).catch(()=>null),
         new Promise(r => setTimeout(r, 3000))
       ])
@@ -1498,7 +1498,7 @@ function doInBrowserInstall(appKey) {
     setTimeout(() => {
       if (wrap) { wrap.style.display = 'none'; }
       if (btn)  btn.disabled = false;
-      launchApp(appKey);
+      window.launchApp(appKey);
     }, 500);
   }).catch(() => {
     const lsKey = appKey === 'admin' ? LS_ADMIN : LS_DRIVER;
@@ -1507,7 +1507,7 @@ function doInBrowserInstall(appKey) {
     markInstalled(appKey);
     if (wrap) wrap.style.display = 'none';
     if (btn)  btn.disabled = false;
-    launchApp(appKey);
+    window.launchApp(appKey);
   });
 }
 
@@ -6854,35 +6854,20 @@ function openAppSettings() {
   };
 
   // ── Vault gate — wraps launchApp() ────────────────────────────────────────────
-  // Intercept the existing launchApp() and gate it behind the vault
+  // Vault is OPTIONAL — only activates if user has already set a PIN.
+  // First launch goes straight through. PIN setup available in Settings.
   const _originalLaunchApp = window.launchApp;
   window.launchApp = function(appKey) {
     _vaultApp = appKey;
-
     const proceed = () => _originalLaunchApp(appKey);
 
-    // If vault not set up — run first-time setup
+    // If vault NOT set up — launch immediately (no forced PIN on first use)
     if (!_vaultIsSetup(appKey)) {
-      _vaultMode = 'setup';
-      _vaultPin  = '';
-      _vaultFirstPin = '';
-      _vaultCallback = proceed;
-      _setTitle(
-        appKey === 'driver' ? '🚛 Driver PIN Setup' : '🔐 Secure Your Fleet',
-        'Choose a 6-digit PIN to protect this app'
-      );
-      _updateDots();
-      _clearMsg();
-      _updateBioKey();
-      _stepIndicator().style.display = 'flex';
-      _dot1().classList.add('active');
-      _dot2().classList.remove('active');
-      document.getElementById('vault-change-pin-link').style.display = 'none';
-      _showOverlay();
+      proceed();
       return;
     }
 
-    // If valid session exists — skip vault, just launch
+    // Vault IS set up — check for valid session
     if (_sessionValid(appKey)) {
       _recordActivity();
       _startAutoLock();
@@ -6890,7 +6875,7 @@ function openAppSettings() {
       return;
     }
 
-    // Show lock screen
+    // Session expired — show lock screen
     _vaultCallback = proceed;
     vaultLock(appKey, false);
   };
