@@ -8,7 +8,7 @@ const DEST = path.join(__dirname, 'public');
 
 if (!fs.existsSync(DEST)) fs.mkdirSync(DEST, { recursive: true });
 
-// Files/patterns to copy to public/
+// All static files to copy to public/
 const staticFiles = [
   'index.html',
   'install.html',
@@ -32,7 +32,7 @@ const staticFiles = [
   'icon-driver.svg',
 ];
 
-let copied = 0;
+let copied = 0, missing = 0;
 for (const file of staticFiles) {
   const src  = path.join(SRC, file);
   const dest = path.join(DEST, file);
@@ -41,8 +41,12 @@ for (const file of staticFiles) {
     console.log(`  ✅ ${file}`);
     copied++;
   } else {
-    console.log(`  ⚠️  skipped (not found): ${file}`);
+    console.error(`  ❌ MISSING: ${file}`);
+    missing++;
   }
 }
 
 console.log(`\nBuild complete — ${copied} files copied to /public`);
+if (missing > 0) {
+  console.error(`WARNING: ${missing} files were missing from the source.`);
+}
