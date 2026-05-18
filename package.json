@@ -1,0 +1,30 @@
+{
+  "name": "fleet-apex",
+  "version": "1.0.0",
+  "description": "Fleet Apex Intelligent AI — Flat Build (Admin + Driver)",
+  "private": true,
+  "scripts": {
+    "dev":           "vite --config vite.config.ts --port 3000",
+    "dev:driver":    "vite --config vite.config_driver-pwa.ts --port 3001",
+    "build":         "tsc --noEmit && vite build --config vite.config.ts",
+    "build:driver":  "tsc --noEmit && vite build --config vite.config_driver-pwa.ts",
+    "build:all":     "npm run build && npm run build:driver",
+    "preview":       "vite preview"
+  },
+  "dependencies": {
+    "react":              "^18.3.1",
+    "react-dom":          "^18.3.1",
+    "react-router-dom":   "^6.24.0",
+    "@supabase/supabase-js": "^2.44.4"
+  },
+  "devDependencies": {
+    "@types/react":       "^18.3.3",
+    "@types/react-dom":   "^18.3.0",
+    "@types/node":        "^20.0.0",
+    "@vercel/node":       "^3.0.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript":         "^5.2.2",
+    "vite":               "^5.3.1",
+    "vite-plugin-pwa":    "^0.20.0"
+  }
+}

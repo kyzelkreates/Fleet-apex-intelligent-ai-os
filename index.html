@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A1628" />
+  <meta name="description" content="Fleet Apex Intelligent AI — Intelligence Driving Every Journey" />
+
+  <!-- PWA meta tags -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Fleet Apex" />
+
+  <!-- Icons (flat — no /icons/ subfolder) -->
+  <link rel="icon"             href="/icon-32.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/icon-152.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png" />
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Open Graph -->
+  <meta property="og:title"       content="Fleet Apex — Intelligent Fleet Management" />
+  <meta property="og:description" content="Intelligence Driving Every Journey" />
+  <meta property="og:type"        content="website" />
+
+  <title>Fleet Apex</title>
+
+  <style>
+    /* Critical inline CSS — prevents flash of unstyled content */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root {
+      height: 100%;
+      background: #050E1A;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+    /* Splash screen shown before React mounts */
+    #splash {
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at 50% 30%, #1E3A5F 0%, #050E1A 70%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; z-index: 9999;
+      transition: opacity 0.4s ease;
+    }
+    #splash.hidden { opacity: 0; pointer-events: none; }
+    #splash-icon {
+      width: 80px; height: 80px; border-radius: 20px;
+      background: linear-gradient(135deg, #1E3A5F, #00D4FF);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px;
+      box-shadow: 0 8px 40px rgba(0,212,255,0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    #splash h1 { color: #fff; font-size: 22px; font-weight: 800; letter-spacing: -0.3px; }
+    #splash p  { color: #00D4FF; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+    #splash-bar {
+      width: 160px; height: 3px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px; overflow: hidden;
+      margin-top: 8px;
+    }
+    #splash-fill {
+      height: 100%; background: #00D4FF; border-radius: 2px;
+      width: 0%; transition: width 0.6s ease;
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); box-shadow: 0 8px 40px rgba(0,212,255,0.3); }
+      50%      { transform: scale(1.05); box-shadow: 0 12px 60px rgba(0,212,255,0.5); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Splash screen (hidden once React mounts) -->
+  <div id="splash">
+    <div id="splash-icon">🚛</div>
+    <h1>Fleet Apex</h1>
+    <p>Intelligence Driving Every Journey</p>
+    <div id="splash-bar"><div id="splash-fill"></div></div>
+  </div>
+
+  <!-- React root -->
+  <div id="root"></div>
+
+  <!-- Vite entry point — App.tsx is the admin dashboard entry -->
+  <script type="module" src="./App.tsx"></script>
+
+  <script>
+    // ── Animate splash bar ─────────────────────────────
+    const fill = document.getElementById("splash-fill");
+    let pct = 0;
+    const iv = setInterval(() => {
+      pct = Math.min(pct + Math.random() * 15, 90);
+      fill.style.width = pct + "%";
+    }, 200);
+
+    // ── Hide splash once React root has content ────────
+    const observer = new MutationObserver(() => {
+      const root = document.getElementById("root");
+      if (root && root.children.length > 0) {
+        clearInterval(iv);
+        fill.style.width = "100%";
+        setTimeout(() => {
+          const splash = document.getElementById("splash");
+          if (splash) { splash.classList.add("hidden"); setTimeout(() => splash.remove(), 450); }
+        }, 300);
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.getElementById("root"), { childList: true, subtree: true });
+
+    // ── Register service worker ────────────────────────
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js", { scope: "/" })
+          .then((r) => console.log("[Fleet Apex] SW registered:", r.scope))
+          .catch((e) => console.warn("[Fleet Apex] SW failed:", e));
+      });
+    }
+  </script>
+</body>
+</html>

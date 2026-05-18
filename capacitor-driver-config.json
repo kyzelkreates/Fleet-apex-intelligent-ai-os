@@ -1,0 +1,44 @@
+{
+  "appId":    "com.fleetapex.driver",
+  "appName":  "Fleet Apex Driver",
+  "webDir":   "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "launchAutoHide": false,
+      "backgroundColor": "#0A0A1A",
+      "androidSplashResourceName": "splash",
+      "iosSplashResourceName": "Default",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#0A0A1A"
+    },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#7B61FF",
+      "sound": "default"
+    },
+    "Geolocation": {
+      "iosLocationWhenInUseUsageDescription": "Fleet Apex Driver uses your location to track route progress and report hazards.",
+      "iosLocationAlwaysUsageDescription":    "Fleet Apex Driver uses your location in the background to track active trips."
+    },
+    "Camera": {
+      "iosCameraUsageDescription":      "Fleet Apex Driver uses the camera to photograph road hazards.",
+      "iosPhotoLibraryUsageDescription":"Fleet Apex Driver can attach existing photos to hazard reports."
+    }
+  }
+}

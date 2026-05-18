@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#7B61FF"
+          android:pathData="M54,10 A44,44 0 1,1 53.99,10 Z"/>
+    <!-- Steering wheel icon -->
+    <circle android:fillColor="#0A0A1A" android:cx="54" android:cy="54" android:r="20"/>
+    <circle android:fillColor="#7B61FF" android:cx="54" android:cy="54" android:r="14"/>
+    <circle android:fillColor="#0A0A1A" android:cx="54" android:cy="54" android:r="5"/>
+    <!-- Spokes -->
+    <rect android:fillColor="#0A0A1A" android:x="52" android:y="40" android:width="4" android:height="10" android:rx="2"/>
+    <rect android:fillColor="#0A0A1A" android:x="52" android:y="58" android:width="4" android:height="10" android:rx="2"/>
+</vector>

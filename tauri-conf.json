@@ -1,0 +1,69 @@
+{
+  "build": {
+    "distDir":            "../dist",
+    "devPath":            "../dist",
+    "beforeBuildCommand": "",
+    "beforeDevCommand":   ""
+  },
+  "package": {
+    "productName": "Fleet Apex",
+    "version":     "1.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell":       { "all": false, "open": true },
+      "fs":          { "all": false, "readFile": true, "writeFile": true, "readDir": true, "scope": ["$APPDATA/*","$DOCUMENT/*"] },
+      "notification":{ "all": true },
+      "dialog":      { "all": true },
+      "http":        { "all": false, "request": true, "scope": ["https://*"] }
+    },
+    "bundle": {
+      "active":     true,
+      "identifier": "com.fleetapex.desktop",
+      "icon":       ["icons/32x32.png","icons/128x128.png","icons/128x128@2x.png","icons/icon.icns","icons/icon.ico"],
+      "targets":    "all",
+      "copyright":  "© 2026 Fleet Apex Intelligent AI",
+      "category":   "Business",
+      "shortDescription": "Fleet Apex — Intelligent Fleet Management",
+      "longDescription":  "Enterprise fleet management with real-time tracking, AI hazard detection, compliance monitoring, and driver management.",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": ""
+      },
+      "macOS": {
+        "frameworks": [],
+        "minimumSystemVersion": "10.15",
+        "signingIdentity": null
+      }
+    },
+    "security": {
+      "csp": "default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; connect-src 'self' https: wss:;"
+    },
+    "windows": [
+      {
+        "label":      "main",
+        "title":      "Fleet Apex",
+        "width":      1280,
+        "height":     800,
+        "minWidth":   960,
+        "minHeight":  600,
+        "resizable":  true,
+        "fullscreen": false,
+        "center":     true,
+        "url":        "index.html",
+        "fileDropEnabled": false
+      }
+    ],
+    "systemTray": {
+      "iconPath":       "icons/32x32.png",
+      "iconAsTemplate": false
+    },
+    "updater": {
+      "active":  false,
+      "dialog":  true,
+      "pubkey":  ""
+    }
+  }
+}

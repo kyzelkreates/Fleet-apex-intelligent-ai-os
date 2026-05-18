@@ -1,0 +1,44 @@
+{
+  "appId":    "com.fleetapex.admin",
+  "appName":  "Fleet Apex",
+  "webDir":   "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "launchAutoHide": false,
+      "backgroundColor": "#050E1A",
+      "androidSplashResourceName": "splash",
+      "iosSplashResourceName": "Default",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#050E1A"
+    },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon_config_sample",
+      "iconColor": "#00D4FF",
+      "sound": "default"
+    },
+    "Geolocation": {
+      "iosLocationWhenInUseUsageDescription": "Fleet Apex uses location to show vehicle positions on the live map.",
+      "iosLocationAlwaysUsageDescription":    "Fleet Apex uses location in the background for continuous fleet tracking."
+    },
+    "Camera": {
+      "iosCameraUsageDescription":      "Fleet Apex uses the camera to capture vehicle inspection photos.",
+      "iosPhotoLibraryUsageDescription":"Fleet Apex can attach existing photos to vehicle or driver records."
+    }
+  }
+}
