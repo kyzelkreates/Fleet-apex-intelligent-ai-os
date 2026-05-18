@@ -9,9 +9,9 @@ const DEST = path.join(__dirname, 'public');
 if (!fs.existsSync(DEST)) fs.mkdirSync(DEST, { recursive: true });
 
 // All static files to copy to public/
+// NOTE: app.html and install.html are built directly into public/ — not copied from root
 const staticFiles = [
   'index.html',
-  'install.html',
   'download.html',
   'sw.js',
   'sw_driver-pwa_public.js',
@@ -46,7 +46,21 @@ for (const file of staticFiles) {
   }
 }
 
-console.log(`\nBuild complete — ${copied} files copied to /public`);
+// install.html and app.html live directly in public/ — verify they exist
+for (const f of ['install.html', 'app.html']) {
+  const dest = path.join(DEST, f);
+  if (fs.existsSync(dest)) {
+    const size = Math.round(fs.statSync(dest).size / 1024);
+    console.log(`  ✅ ${f} (${size}KB — pre-built)`);
+    copied++;
+  } else {
+    console.error(`  ❌ MISSING: public/${f}`);
+    missing++;
+  }
+}
+
+console.log(`\nBuild complete — ${copied} files in /public`);
 if (missing > 0) {
-  console.error(`WARNING: ${missing} files were missing from the source.`);
+  console.error(`WARNING: ${missing} files were missing.`);
+  process.exit(1);
 }
