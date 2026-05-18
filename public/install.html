@@ -1271,11 +1271,11 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     return;
   }
-  // Resume last used app automatically
+  // Resume last used app automatically — launch directly, don't make user tap again
   const last = lsGet(LS_LAST);
   if (last === 'admin' && lsGet(LS_ADMIN)) {
     selectApp('admin');
-    showToast('Welcome back — tap Launch to open Fleet Dashboard');
+    setTimeout(() => window.launchApp('admin'), 300);
   } else if (last === 'driver' && lsGet(LS_DRIVER)) {
     selectApp('driver');
     showToast('Welcome back — tap Launch to open Driver PWA');
@@ -1418,6 +1418,31 @@ function otiRefreshButton() {
   if (oldTxt) oldTxt.textContent = btnMain.textContent;
   const oldIco = document.getElementById('btn-icon');
   if (oldIco) oldIco.textContent = btnIcon.textContent;
+}
+
+function _directLaunch(appKey) {
+  // Safety net: switch screens directly without going through install flow
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const screenId = appKey === 'admin' ? 'screen-admin' : 'screen-driver';
+  const screen = document.getElementById(screenId);
+  if (screen) {
+    screen.classList.add('active');
+    if (appKey === 'admin') {
+      const cfg = lsGet(LS_FLEET);
+      if (cfg?.fleetName) {
+        const el = document.getElementById('admin-fleet-name');
+        if (el) el.textContent = cfg.fleetName;
+      }
+      showAdminPage('dashboard');
+      initSyncBus();
+    } else {
+      const profile = lsGet(LS_DRIVER_PROFILE);
+      if (profile) updateDriverHeader(profile);
+      showDriverPage('dashboard');
+    }
+    document.title = appKey === 'admin' ? 'Fleet Apex Admin' : 'Fleet Apex Driver';
+    history.pushState({ app: appKey }, '', '?app=' + appKey);
+  }
 }
 
 function handleLaunch() {
@@ -1641,11 +1666,14 @@ function launchApp(appKey) {
     autoLoadGoogleMaps(); // Load Google Maps if key available
     applyProvisionPayload(); // Apply provisioning data
     applyWLPayload();       // Apply white-label config from URL from ?provision= URL param
-    // Show full-screen permission wizard on first launch; subsequent launches skip it
-    launchPermissionWizard((results) => {
-      startGPSTracker();
-      initSyncBus();
-    });
+    // Show permission wizard on first driver launch (non-blocking — deferred 800ms)
+    // Short delay ensures screen-driver is visible before wizard appears
+    setTimeout(() => {
+      launchPermissionWizard((results) => {
+        startGPSTracker();
+        initSyncBus();
+      });
+    }, 800);
   }
   document.title = appKey === 'admin' ? 'Fleet Apex Admin' : 'Fleet Apex Driver';
   setManifestLink(appKey === 'admin' ? 'manifest.json' : 'manifest_driver-pwa_public.json');
@@ -6856,29 +6884,41 @@ function openAppSettings() {
   // ── Vault gate — wraps launchApp() ────────────────────────────────────────────
   // Vault is OPTIONAL — only activates if user has already set a PIN.
   // First launch goes straight through. PIN setup available in Settings.
-  const _originalLaunchApp = window.launchApp;
-  window.launchApp = function(appKey) {
-    _vaultApp = appKey;
-    const proceed = () => _originalLaunchApp(appKey);
+  //
+  // IMPORTANT: We intercept via DOMContentLoaded to guarantee launchApp()
+  // is fully defined before we wrap it. Eager capture at IIFE parse-time
+  // is unreliable on mobile browsers (Android Chrome / Samsung Internet).
+  function _installVaultGate() {
+    const _originalLaunchApp = window._fa_originalLaunchApp || launchApp;
+    // Store original so it's never lost
+    if (!window._fa_originalLaunchApp) window._fa_originalLaunchApp = launchApp;
 
-    // If vault NOT set up — launch immediately (no forced PIN on first use)
-    if (!_vaultIsSetup(appKey)) {
-      proceed();
-      return;
-    }
+    window.launchApp = function(appKey) {
+      _vaultApp = appKey;
+      const proceed = () => {
+        // Always call the true original, never a wrapped version
+        window._fa_originalLaunchApp(appKey);
+      };
 
-    // Vault IS set up — check for valid session
-    if (_sessionValid(appKey)) {
-      _recordActivity();
-      _startAutoLock();
-      proceed();
-      return;
-    }
+      // If vault NOT set up — launch immediately (no forced PIN on first use)
+      if (!_vaultIsSetup(appKey)) {
+        proceed();
+        return;
+      }
 
-    // Session expired — show lock screen
-    _vaultCallback = proceed;
-    vaultLock(appKey, false);
-  };
+      // Vault IS set up — check for valid session
+      if (_sessionValid(appKey)) {
+        _recordActivity();
+        _startAutoLock();
+        proceed();
+        return;
+      }
+
+      // Session expired — show lock screen
+      _vaultCallback = proceed;
+      vaultLock(appKey, false);
+    };
+  }
 
   // ── Settings integration — inject vault controls into Settings page ────────────
   function _injectVaultSettings() {
@@ -6964,6 +7004,10 @@ function openAppSettings() {
   async function _initVault() {
     await _checkBiometric();
     _updateBioKey();
+    // Install the vault gate NOW — launchApp is guaranteed to be defined
+    // because we're in DOMContentLoaded (or after), so all function
+    // declarations have been hoisted and are accessible.
+    _installVaultGate();
     console.log(`[FA Vault] Initialised — biometric=${_biometricAvail}`);
     window.dispatchEvent(new CustomEvent('fa:vaultReady', { detail: { biometricAvail: _biometricAvail } }));
   }
