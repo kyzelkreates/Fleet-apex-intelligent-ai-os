@@ -1,0 +1,77 @@
+{
+  "name": "Fleet Apex Driver",
+  "short_name": "FA Driver",
+  "description": "Fleet Apex Driver \u2014 Navigation, hazards, SOS and messages",
+  "start_url": "./install.html?app=driver",
+  "id": "/fleet-apex-driver",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#050E1A",
+  "theme_color": "#7B61FF",
+  "categories": [
+    "navigation",
+    "productivity"
+  ],
+  "scope": "./",
+  "lang": "en-GB",
+  "icons": [
+    {
+      "src": "icon-driver-48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-driver-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-driver-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-driver-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-driver-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-driver.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Navigate",
+      "url": "./install.html?app=driver&page=nav",
+      "description": "Trip planner"
+    },
+    {
+      "name": "Report Hazard",
+      "url": "./install.html?app=driver&page=hazard",
+      "description": "Hazard reporting"
+    },
+    {
+      "name": "SOS",
+      "url": "./install.html?app=driver&page=dashboard",
+      "description": "Emergency SOS"
+    }
+  ],
+  "prefer_related_applications": false
+}

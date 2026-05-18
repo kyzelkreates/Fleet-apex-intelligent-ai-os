@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Fleet Apex Intelligent AI OS — Five years in the making. Enterprise fleet management reimagined. Real-time tracking, AI hazard detection, driver compliance and more."/>
+  <meta property="og:title" content="Fleet Apex Intelligent AI OS"/>
+  <meta property="og:description" content="We didn't set out to beat the big players. We just got tired of paying for software that wasn't built for the people actually doing the work."/>
+  <meta property="og:image" content="/icon-admin-512.png"/>
+  <title>Fleet Apex Intelligent AI OS</title>
+  <style>
+    :root {
+      --bg:       #050E1A;
+      --bg2:      #0A1628;
+      --bg3:      #0F1F38;
+      --accent:   #00D4FF;
+      --purple:   #7B61FF;
+      --green:    #00FF88;
+      --amber:    #FFB800;
+      --red:      #FF4444;
+      --text:     #E8F4FD;
+      --muted:    #6B8FAF;
+      --border:   rgba(0,212,255,0.12);
+      --card-bg:  rgba(10,22,40,0.85);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+      line-height:1.65;
+      overflow-x:hidden;
+    }
+
+    /* ── NAV ── */
+    nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:18px 5%;
+      background:rgba(5,14,26,0.92);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+    }
+    .nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;color:var(--accent);letter-spacing:-.3px;}
+    .nav-logo img{width:34px;height:34px;border-radius:8px;}
+    .nav-links{display:flex;gap:28px;list-style:none;}
+    .nav-links a{color:var(--muted);text-decoration:none;font-size:.9rem;transition:color .2s;}
+    .nav-links a:hover{color:var(--accent);}
+    .nav-cta{
+      background:var(--accent);color:var(--bg);
+      padding:10px 22px;border-radius:8px;font-weight:700;font-size:.88rem;
+      text-decoration:none;transition:opacity .2s;
+    }
+    .nav-cta:hover{opacity:.85;}
+
+    /* ── HERO ── */
+    .hero{
+      min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:120px 5% 80px;
+      position:relative;overflow:hidden;
+    }
+    .hero::before{
+      content:'';position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 20%, rgba(0,212,255,.08) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(123,97,255,.07) 0%, transparent 60%);
+      pointer-events:none;
+    }
+    .hero-badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);
+      color:var(--accent);font-size:.8rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+      padding:8px 18px;border-radius:99px;margin-bottom:32px;
+    }
+    .hero-badge span{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.4);}}
+    h1{
+      font-size:clamp(2.4rem,6vw,4.8rem);
+      font-weight:900;line-height:1.08;letter-spacing:-1.5px;
+      max-width:900px;margin-bottom:16px;
+    }
+    h1 .grad{
+      background:linear-gradient(135deg,var(--accent) 0%,var(--purple) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hero-sub{
+      font-size:clamp(1rem,2.5vw,1.3rem);color:var(--muted);
+      max-width:680px;margin:0 auto 48px;
+    }
+    .hero-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:64px;}
+    .btn-primary{
+      background:linear-gradient(135deg,var(--accent),var(--purple));
+      color:#fff;padding:16px 36px;border-radius:10px;
+      font-weight:700;font-size:1rem;text-decoration:none;
+      box-shadow:0 8px 32px rgba(0,212,255,.25);transition:transform .2s,box-shadow .2s;
+    }
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,212,255,.35);}
+    .btn-secondary{
+      background:transparent;border:1px solid var(--border);
+      color:var(--text);padding:16px 36px;border-radius:10px;
+      font-weight:600;font-size:1rem;text-decoration:none;transition:border-color .2s,color .2s;
+    }
+    .btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+
+    .hero-stats{
+      display:flex;gap:40px;flex-wrap:wrap;justify-content:center;
+      border-top:1px solid var(--border);padding-top:48px;width:100%;max-width:700px;
+    }
+    .stat{text-align:center;}
+    .stat-num{font-size:2rem;font-weight:900;color:var(--accent);line-height:1;}
+    .stat-label{font-size:.8rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;}
+
+    /* ── SECTIONS ── */
+    section{padding:100px 5%;}
+    .section-inner{max-width:1100px;margin:0 auto;}
+    .section-tag{
+      display:inline-block;color:var(--accent);font-size:.78rem;font-weight:700;
+      text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;
+    }
+    h2{font-size:clamp(1.8rem,4vw,3rem);font-weight:900;letter-spacing:-.5px;line-height:1.15;margin-bottom:20px;}
+    .lead{font-size:1.1rem;color:var(--muted);max-width:700px;margin-bottom:60px;}
+
+    /* ── STORY ── */
+    .story{background:var(--bg2);}
+    .story-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
+    @media(max-width:768px){.story-grid{grid-template-columns:1fr;}}
+    .story-text p{color:#A8C4D8;line-height:1.85;margin-bottom:20px;font-size:1.02rem;}
+    .story-text p strong{color:var(--text);}
+    .story-callout{
+      background:var(--card-bg);border:1px solid var(--border);
+      border-left:3px solid var(--accent);
+      border-radius:12px;padding:28px 24px;margin-top:32px;
+    }
+    .story-callout p{color:var(--text);font-size:1.05rem;font-style:italic;margin:0;}
+    .timeline{display:flex;flex-direction:column;gap:0;}
+    .tl-item{display:flex;gap:20px;position:relative;}
+    .tl-item:not(:last-child) .tl-line{
+      position:absolute;left:17px;top:40px;bottom:-10px;width:2px;
+      background:linear-gradient(to bottom,var(--accent),transparent);
+    }
+    .tl-dot{
+      width:36px;height:36px;min-width:36px;border-radius:50%;
+      background:var(--bg3);border:2px solid var(--accent);
+      display:flex;align-items:center;justify-content:center;
+      font-size:.85rem;font-weight:700;color:var(--accent);z-index:1;
+    }
+    .tl-content{padding:4px 0 32px;}
+    .tl-year{font-size:.78rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+    .tl-title{font-size:1rem;font-weight:700;color:var(--text);margin:4px 0;}
+    .tl-desc{font-size:.88rem;color:var(--muted);line-height:1.6;}
+
+    /* ── FEATURES ── */
+    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;}
+    .feat-card{
+      background:var(--card-bg);border:1px solid var(--border);
+      border-radius:14px;padding:28px;
+      transition:border-color .25s,transform .25s;
+    }
+    .feat-card:hover{border-color:rgba(0,212,255,.4);transform:translateY(-4px);}
+    .feat-icon{font-size:2rem;margin-bottom:16px;}
+    .feat-title{font-size:1.05rem;font-weight:700;margin-bottom:8px;}
+    .feat-desc{font-size:.9rem;color:var(--muted);line-height:1.65;}
+    .feat-tag{
+      display:inline-block;margin-top:14px;
+      font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+      padding:4px 10px;border-radius:99px;
+      background:rgba(0,212,255,.1);color:var(--accent);
+    }
+
+    /* ── APPS DOWNLOAD ── */
+    .apps{background:var(--bg2);}
+    .apps-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+    @media(max-width:640px){.apps-grid{grid-template-columns:1fr;}}
+    .app-card{
+      background:var(--bg3);border:1px solid var(--border);
+      border-radius:16px;padding:36px 28px;text-align:center;
+    }
+    .app-card.admin{border-color:rgba(0,212,255,.3);}
+    .app-card.driver{border-color:rgba(123,97,255,.3);}
+    .app-logo{
+      width:72px;height:72px;border-radius:18px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:2rem;margin:0 auto 20px;
+    }
+    .app-logo.admin-logo{background:linear-gradient(135deg,rgba(0,212,255,.2),rgba(0,212,255,.05));border:1px solid rgba(0,212,255,.3);}
+    .app-logo.driver-logo{background:linear-gradient(135deg,rgba(123,97,255,.2),rgba(123,97,255,.05));border:1px solid rgba(123,97,255,.3);}
+    .app-title{font-size:1.3rem;font-weight:800;margin-bottom:8px;}
+    .app-desc{font-size:.9rem;color:var(--muted);margin-bottom:28px;line-height:1.65;}
+    .dl-btns{display:flex;flex-direction:column;gap:10px;}
+    .dl-btn{
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      padding:13px 20px;border-radius:10px;font-weight:600;font-size:.9rem;
+      text-decoration:none;transition:opacity .2s;border:1px solid transparent;
+    }
+    .dl-btn:hover{opacity:.85;}
+    .dl-btn.android{background:var(--green);color:#050E1A;}
+    .dl-btn.ios{background:var(--text);color:var(--bg);}
+    .dl-btn.desktop{background:transparent;border-color:var(--border);color:var(--text);}
+    .dl-btn.pwa{
+      background:linear-gradient(135deg,rgba(0,212,255,.15),rgba(123,97,255,.15));
+      border-color:var(--border);color:var(--accent);
+    }
+    .platform-note{font-size:.75rem;color:var(--muted);margin-top:16px;line-height:1.5;}
+
+    /* ── WHY US ── */
+    .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+    @media(max-width:768px){.why-grid{grid-template-columns:1fr;}}
+    .why-points{display:flex;flex-direction:column;gap:24px;}
+    .why-pt{display:flex;gap:16px;align-items:flex-start;}
+    .why-check{
+      width:32px;height:32px;min-width:32px;border-radius:8px;
+      background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);
+      display:flex;align-items:center;justify-content:center;color:var(--green);font-size:1rem;
+    }
+    .why-text strong{display:block;font-size:1rem;font-weight:700;margin-bottom:4px;}
+    .why-text span{font-size:.9rem;color:var(--muted);}
+    .comparison{
+      background:var(--card-bg);border:1px solid var(--border);
+      border-radius:14px;padding:28px;overflow-x:auto;
+    }
+    .comparison table{width:100%;border-collapse:collapse;font-size:.88rem;}
+    .comparison th{
+      color:var(--muted);font-weight:600;text-align:left;
+      padding:10px 14px;border-bottom:1px solid var(--border);
+    }
+    .comparison td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);}
+    .comparison tr:last-child td{border-bottom:none;}
+    .comparison td:first-child{color:var(--text);font-weight:500;}
+    .tick{color:var(--green);font-weight:700;}
+    .cross{color:var(--muted);}
+    .partial{color:var(--amber);}
+
+    /* ── HOURS ── */
+    .hours-band{
+      background:linear-gradient(135deg,rgba(0,212,255,.07),rgba(123,97,255,.07));
+      border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+      padding:80px 5%;text-align:center;
+    }
+    .hours-num{
+      font-size:clamp(3rem,10vw,7rem);font-weight:900;
+      background:linear-gradient(135deg,var(--accent),var(--purple));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      line-height:1;
+    }
+    .hours-label{font-size:1.2rem;color:var(--muted);margin-top:12px;}
+    .hours-breakdown{
+      display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin-top:48px;
+    }
+    .hb-item{
+      background:var(--card-bg);border:1px solid var(--border);
+      border-radius:12px;padding:20px 28px;text-align:center;min-width:160px;
+    }
+    .hb-num{font-size:1.6rem;font-weight:900;color:var(--accent);}
+    .hb-label{font-size:.78rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;}
+
+    /* ── CTA ── */
+    .cta-section{
+      text-align:center;padding:120px 5%;
+      background:radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,212,255,.07) 0%, transparent 70%);
+    }
+    .cta-section h2{max-width:700px;margin:0 auto 20px;}
+    .cta-section p{color:var(--muted);max-width:540px;margin:0 auto 48px;font-size:1.05rem;}
+
+    /* ── FOOTER ── */
+    footer{
+      background:var(--bg2);border-top:1px solid var(--border);
+      padding:48px 5%;text-align:center;
+    }
+    .footer-logo{font-size:1rem;font-weight:800;color:var(--accent);margin-bottom:12px;}
+    .footer-tagline{font-size:.88rem;color:var(--muted);margin-bottom:24px;}
+    .footer-links{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;}
+    .footer-links a{color:var(--muted);font-size:.85rem;text-decoration:none;}
+    .footer-links a:hover{color:var(--accent);}
+    .footer-copy{font-size:.78rem;color:rgba(107,143,175,.5);}
+
+    @media(max-width:640px){
+      .nav-links{display:none;}
+      .hero-stats{gap:24px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="/icon-admin-192.png" alt="Fleet Apex"/>
+    Fleet Apex
+  </div>
+  <ul class="nav-links">
+    <li><a href="#story">Our Story</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#apps">Download</a></li>
+    <li><a href="#why">Why Us</a></li>
+  </ul>
+  <a href="#apps" class="nav-cta">Get the App</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span></span> Live Platform · Built by Fleet People, for Fleet People
+  </div>
+  <h1>Fleet Management<br/><span class="grad">Reimagined from Scratch</span></h1>
+  <p class="hero-sub">
+    Five years. Thousands of hours. One obsession: build the fleet software 
+    that actually works for the people driving the trucks, not the people sitting in boardrooms.
+  </p>
+  <div class="hero-btns">
+    <a href="#apps" class="btn-primary">Download the App</a>
+    <a href="#story" class="btn-secondary">Read Our Story</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Years in Development</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12,000+</div>
+      <div class="stat-label">Development Hours</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">91/91</div>
+      <div class="stat-label">Compliance Checks Passed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Human-in-the-Loop AI</div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="story" id="story">
+  <div class="section-inner">
+    <span class="section-tag">Our Story</span>
+    <h2>We didn't set out to<br/>take on the giants.</h2>
+    <div class="story-grid">
+      <div class="story-text">
+        <p>
+          It started with frustration. Not the quiet kind — the kind that builds up over years of watching 
+          drivers struggle with clunky apps, fleet managers drown in spreadsheets, and six-figure software 
+          bills deliver less than a well-built mobile app could do for free.
+        </p>
+        <p>
+          <strong>The big players — the Volvos, the Samsaras, the Geotabs of the world — they've built 
+          empires.</strong> Thousands of engineers, hundreds of millions in funding, decades of brand trust. 
+          We have nothing but respect for what they've built.
+        </p>
+        <p>
+          But here's the thing: those platforms were designed for enterprise procurement cycles, not for 
+          the owner-operator running 12 vans, or the regional haulier trying to stay compliant without 
+          hiring a dedicated compliance officer. The software is built for the sale, not the driver.
+        </p>
+        <p>
+          So in 2021, we started building something different. Not bigger. <strong>Better.</strong>
+        </p>
+        <p>
+          We started with a single question: <em>"What would fleet software look like if it was built 
+          entirely around the people who use it every day?"</em> The answer took five years, thousands 
+          of hours of late nights, complete rebuilds, and more cups of coffee than we care to admit.
+        </p>
+        <p>
+          Fleet Apex Intelligent AI OS isn't trying to replace those companies. We're not chasing 
+          their customers. We're building for the fleets they forgot about — and doing it in a way 
+          that makes them quietly wonder why they didn't think of it first.
+        </p>
+        <div class="story-callout">
+          <p>"We're not trying to be the biggest. We're trying to be the one you'd actually recommend 
+          to a mate who just bought their first van."</p>
+        </div>
+      </div>
+      <div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot">21</div>
+            <div class="tl-line"></div>
+            <div class="tl-content">
+              <div class="tl-year">2021 — The Idea</div>
+              <div class="tl-title">Frustrated by the status quo</div>
+              <div class="tl-desc">First prototype sketched out. Core concept: a fleet platform that speaks human, not enterprise. Nights and weekends only.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">22</div>
+            <div class="tl-line"></div>
+            <div class="tl-content">
+              <div class="tl-year">2022 — First Build</div>
+              <div class="tl-title">Admin Dashboard + Driver App v1</div>
+              <div class="tl-desc">First working dual-app system. Real drivers tested it. Feedback was brutal. We scrapped half of it and started again. Exactly as it should be.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">23</div>
+            <div class="tl-line"></div>
+            <div class="tl-content">
+              <div class="tl-year">2023 — AI Integration</div>
+              <div class="tl-title">Hazard detection + route intelligence</div>
+              <div class="tl-desc">Built the AI Orchestration Core — not to automate decisions, but to give fleet managers better ones. Every AI output is advisory. Humans stay in control. Always.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">24</div>
+            <div class="tl-line"></div>
+            <div class="tl-content">
+              <div class="tl-year">2024 — Compliance Engine</div>
+              <div class="tl-title">UK WTD, tachograph & safety systems</div>
+              <div class="tl-desc">Deep-dive into UK transport compliance. Built tachograph integration, WTD tracking, and a compliance layer that runs 91 automated checks — and passes all of them.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">25</div>
+            <div class="tl-line"></div>
+            <div class="tl-content">
+              <div class="tl-year">2025 — Going Native</div>
+              <div class="tl-title">Android, iOS & Desktop apps</div>
+              <div class="tl-desc">Wrapped the platform in Capacitor (mobile) and Tauri (desktop). Real native apps. Offline-first. Installs in seconds. Works like the expensive ones, without the bill.</div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">26</div>
+            <div class="tl-line"></div>
+            <div class="tl-content">
+              <div class="tl-year">2026 — Launch</div>
+              <div class="tl-title">Fleet Apex Intelligent AI OS is live</div>
+              <div class="tl-desc">Production-ready. White-label ready. Built for the fleets that deserve better software — and now they've got it.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOURS BAND -->
+<div class="hours-band" id="hours">
+  <div class="hours-num">12,000+</div>
+  <div class="hours-label">hours poured into this platform — and we're just getting started.</div>
+  <div class="hours-breakdown">
+    <div class="hb-item"><div class="hb-num">3,200+</div><div class="hb-label">UI / UX Design</div></div>
+    <div class="hb-item"><div class="hb-num">4,100+</div><div class="hb-label">Core Engineering</div></div>
+    <div class="hb-item"><div class="hb-num">1,800+</div><div class="hb-label">AI & Safety Systems</div></div>
+    <div class="hb-item"><div class="hb-num">1,400+</div><div class="hb-label">Compliance Research</div></div>
+    <div class="hb-item"><div class="hb-num">900+</div><div class="hb-label">Driver Testing</div></div>
+    <div class="hb-item"><div class="hb-num">600+</div><div class="hb-label">Security Hardening</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <span class="section-tag">What It Does</span>
+    <h2>Everything your fleet needs.<br/>Nothing you don't.</h2>
+    <p class="lead">Built modular. Every feature is a plugin — snap in what you need, leave out what you don't.</p>
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🗺️</div>
+        <div class="feat-title">Live Fleet Map</div>
+        <div class="feat-desc">Real-time GPS tracking for every vehicle on a live map. Sub-second updates. Works offline — syncs the moment signal returns.</div>
+        <span class="feat-tag">Real-time</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚠️</div>
+        <div class="feat-title">AI Hazard Detection</div>
+        <div class="feat-desc">Drivers report hazards — tight roads, parked cars both sides, weight restrictions, low bridges — and AI validates and routes around them automatically. Advisory only.</div>
+        <span class="feat-tag">AI-Powered</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📋</div>
+        <div class="feat-title">UK Compliance Engine</div>
+        <div class="feat-desc">WTD tracking, tachograph integration, driver hours, vehicle defects, and 91 automated compliance checks. Stay legal without hiring a compliance officer.</div>
+        <span class="feat-tag">Compliance</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🚛</div>
+        <div class="feat-title">Vehicle Management</div>
+        <div class="feat-desc">Full CRUD for your entire fleet. MOT, service, insurance, defect logs, breakdown reports. Every vehicle's history in one place.</div>
+        <span class="feat-tag">Operations</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">👥</div>
+        <div class="feat-title">Driver Management</div>
+        <div class="feat-desc">Driver profiles, licence verification, fatigue scoring, trip history, and tachograph data. Know your drivers as well as you know your trucks.</div>
+        <span class="feat-tag">People</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💬</div>
+        <div class="feat-title">Fleet Messaging</div>
+        <div class="feat-desc">Two-way messaging between admin and drivers. Unread badges, push notifications, broadcast messages. No WhatsApp groups needed.</div>
+        <span class="feat-tag">Communication</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🤖</div>
+        <div class="feat-title">AI Command Centre</div>
+        <div class="feat-desc">Five AI tabs: Chat, Hazard Analysis, Route Safety, Fatigue Monitor, and Compliance Advisor. All outputs are advisory — your managers decide. Always.</div>
+        <span class="feat-tag">Intelligence</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🏷️</div>
+        <div class="feat-title">White-Label Branding</div>
+        <div class="feat-desc">Full multi-tenant white-label system. Custom domain, logo, colours, feature toggles per client. One platform, infinite brands.</div>
+        <span class="feat-tag">Enterprise</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔌</div>
+        <div class="feat-title">Plugin Architecture</div>
+        <div class="feat-desc">Every feature is an isolated plugin subscribing to the internal Event Bus. Add capabilities without touching core code. Future-proof by design.</div>
+        <span class="feat-tag">Modular</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPS DOWNLOAD -->
+<section class="apps" id="apps">
+  <div class="section-inner">
+    <span class="section-tag">Get the Apps</span>
+    <h2>Two apps. One platform.<br/>Every device covered.</h2>
+    <p class="lead">Admin Dashboard for fleet managers. Driver App for the people behind the wheel. Both offline-first, both native-quality.</p>
+    <div class="apps-grid">
+
+      <div class="app-card admin">
+        <div class="app-logo admin-logo">🖥️</div>
+        <div class="app-title" style="color:var(--accent);">Fleet Apex Admin</div>
+        <div class="app-desc">The full command centre. Live map, vehicle CRUD, driver management, AI Command Centre, compliance dashboard, messaging, white-label controls, and plugin manager — all in one.</div>
+        <div class="dl-btns">
+          <a href="/install.html" class="dl-btn pwa">🌐 Open in Browser (PWA)</a>
+          <a href="/download" class="dl-btn android">
+            🤖 Download Android APK
+          </a>
+          <a href="/download" class="dl-btn desktop">
+            💻 Windows Installer (.msi)
+          </a>
+          <a href="/download" class="dl-btn desktop">
+            🍎 macOS Installer (.dmg)
+          </a>
+        </div>
+        <p class="platform-note">⚠️ Android: enable "Install from unknown sources" in settings before installing the APK. iOS requires App Store distribution.</p>
+      </div>
+
+      <div class="app-card driver">
+        <div class="app-logo driver-logo">🚛</div>
+        <div class="app-title" style="color:var(--purple);">Fleet Apex Driver</div>
+        <div class="app-desc">Built for the cab. Route navigation, hazard reporting, trip planner with vehicle specs, emergency SOS, tachograph check-in, and direct messaging with dispatch — all offline-capable.</div>
+        <div class="dl-btns">
+          <a href="/install.html" class="dl-btn pwa" style="color:var(--purple);background:linear-gradient(135deg,rgba(123,97,255,.15),rgba(123,97,255,.05));border-color:rgba(123,97,255,.3);">🌐 Open in Browser (PWA)</a>
+          <a href="/download" class="dl-btn android" style="background:var(--purple);color:#fff;">
+            🤖 Download Android APK
+          </a>
+          <a href="/download" class="dl-btn desktop">
+            💻 Windows Installer (.msi)
+          </a>
+          <a href="/download" class="dl-btn desktop">
+            🍎 macOS Installer (.dmg)
+          </a>
+        </div>
+        <p class="platform-note">⚠️ Android: enable "Install from unknown sources" in settings before installing the APK. iOS requires App Store distribution.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="section-inner">
+    <span class="section-tag">Why Fleet Apex</span>
+    <h2>We're not competing.<br/>We're just doing it better.</h2>
+    <p class="lead">The big players built for the enterprise sales cycle. We built for the person who actually needs it at 6am on a rainy Monday.</p>
+    <div class="why-grid">
+      <div class="why-points">
+        <div class="why-pt">
+          <div class="why-check">✓</div>
+          <div class="why-text">
+            <strong>No bloat. No learning curve.</strong>
+            <span>Drivers are up and running in under 5 minutes. No 3-day onboarding, no training videos, no helpdesk tickets.</span>
+          </div>
+        </div>
+        <div class="why-pt">
+          <div class="why-check">✓</div>
+          <div class="why-text">
+            <strong>AI that advises, not controls.</strong>
+            <span>Every AI recommendation requires a human decision. We believe in augmenting your managers, not replacing their judgement.</span>
+          </div>
+        </div>
+        <div class="why-pt">
+          <div class="why-check">✓</div>
+          <div class="why-text">
+            <strong>Offline-first. Always works.</strong>
+            <span>Built for the reality of fleet work — tunnels, rural areas, dead zones. It works offline and syncs when it can. Not the other way round.</span>
+          </div>
+        </div>
+        <div class="why-pt">
+          <div class="why-check">✓</div>
+          <div class="why-text">
+            <strong>Built modular. Grows with you.</strong>
+            <span>Start with tracking. Add compliance later. White-label it when you're ready. The plugin architecture means you never pay for what you don't use.</span>
+          </div>
+        </div>
+        <div class="why-pt">
+          <div class="why-check">✓</div>
+          <div class="why-text">
+            <strong>5 years of real-world refinement.</strong>
+            <span>Not a pivot, not a side project. Five years of building, scrapping, and rebuilding based on feedback from actual drivers and fleet managers.</span>
+          </div>
+        </div>
+      </div>
+      <div class="comparison">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th style="color:var(--accent);">Fleet Apex</th>
+              <th>Others</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Offline-first</td><td class="tick">✅ Always</td><td class="partial">⚠️ Limited</td></tr>
+            <tr><td>AI hazard detection</td><td class="tick">✅ Built-in</td><td class="cross">❌ Add-on</td></tr>
+            <tr><td>Human-in-the-loop AI</td><td class="tick">✅ Core design</td><td class="cross">❌ Rare</td></tr>
+            <tr><td>Driver app onboarding</td><td class="tick">✅ &lt;5 mins</td><td class="cross">❌ Days</td></tr>
+            <tr><td>White-label ready</td><td class="tick">✅ Full OTA</td><td class="partial">⚠️ Enterprise only</td></tr>
+            <tr><td>UK WTD compliance</td><td class="tick">✅ Built-in</td><td class="partial">⚠️ Add-on cost</td></tr>
+            <tr><td>Plugin architecture</td><td class="tick">✅ Core design</td><td class="cross">❌ Monolithic</td></tr>
+            <tr><td>Open deployment</td><td class="tick">✅ Self-host</td><td class="cross">❌ Vendor lock-in</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <span class="section-tag">Ready?</span>
+  <h2>Download Fleet Apex today.<br/>It's ready when you are.</h2>
+  <p>Five years in the making. Three platforms. One mission: fleet software that actually works for the people using it.</p>
+  <div class="hero-btns" style="justify-content:center;">
+    <a href="#apps" class="btn-primary">Get the App Now</a>
+    <a href="/install.html" class="btn-secondary">Open in Browser</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">⬡ Fleet Apex Intelligent AI OS</div>
+  <div class="footer-tagline">Built for the people who keep things moving.</div>
+  <div class="footer-links">
+    <a href="#story">Our Story</a>
+    <a href="#features">Features</a>
+    <a href="#apps">Download</a>
+    <a href="/install.html">Web App</a>
+    <a href="https://github.com/kyzelkreates/Fleet-apex-intelligent-ai-os">GitHub</a>
+  </div>
+  <div class="footer-copy">© 2026 Fleet Apex Intelligent AI OS. Built different. On purpose.</div>
+</footer>
+
+</body>
+</html>

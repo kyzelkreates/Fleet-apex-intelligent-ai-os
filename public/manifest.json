@@ -1,0 +1,77 @@
+{
+  "name": "Fleet Apex Dashboard",
+  "short_name": "Fleet Apex",
+  "description": "Fleet Apex Intelligent AI \u2014 Enterprise Fleet Control Center",
+  "start_url": "./install.html?app=admin",
+  "id": "/fleet-apex-admin",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "background_color": "#050E1A",
+  "theme_color": "#00D4FF",
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "scope": "./",
+  "lang": "en-GB",
+  "icons": [
+    {
+      "src": "icon-admin-48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-admin-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-admin-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-admin-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-admin-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-admin.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Live Map",
+      "url": "./install.html?app=admin&page=map",
+      "description": "Real-time tracking"
+    },
+    {
+      "name": "Vehicles",
+      "url": "./install.html?app=admin&page=vehicles",
+      "description": "Vehicle management"
+    },
+    {
+      "name": "Drivers",
+      "url": "./install.html?app=admin&page=drivers",
+      "description": "Driver management"
+    }
+  ],
+  "prefer_related_applications": false
+}

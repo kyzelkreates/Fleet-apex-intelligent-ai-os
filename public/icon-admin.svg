@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#0A1628"/>
+  <rect x="60" y="140" width="392" height="232" rx="20" fill="#0D1F35" stroke="#00D4FF" stroke-width="6"/>
+  <circle cx="256" cy="256" r="70" fill="none" stroke="#00D4FF" stroke-width="8"/>
+  <circle cx="256" cy="256" r="12" fill="#00D4FF"/>
+  <line x1="256" y1="186" x2="256" y2="246" stroke="#00D4FF" stroke-width="6" stroke-linecap="round"/>
+  <line x1="256" y1="256" x2="296" y2="256" stroke="#7B61FF" stroke-width="5" stroke-linecap="round"/>
+  <rect x="100" y="380" width="80" height="10" rx="5" fill="#00D4FF" opacity="0.5"/>
+  <rect x="216" y="380" width="80" height="10" rx="5" fill="#00D4FF" opacity="0.5"/>
+  <rect x="332" y="380" width="80" height="10" rx="5" fill="#00D4FF" opacity="0.5"/>
+  <text x="256" y="490" font-size="28" fill="#8899AA" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold">FLEET APEX</text>
+</svg>

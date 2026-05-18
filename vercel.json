@@ -1,64 +1,26 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api-artifacts.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "chat.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "branding.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "emergency.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "hazards.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "location.ts",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    { "src": "/api/artifacts",         "dest": "/api-artifacts.ts" },
-    { "src": "/api/ai/chat",           "dest": "/chat.ts" },
-    { "src": "/api/branding(.*)",      "dest": "/branding.ts" },
-    { "src": "/api/emergency",         "dest": "/emergency.ts" },
-    { "src": "/api/hazards(.*)",       "dest": "/hazards.ts" },
-    { "src": "/api/location(.*)",      "dest": "/location.ts" },
-    { "src": "/api/admin/seed-vault",  "dest": "/branding.ts" },
-    { "src": "/download",              "dest": "/download.html" },
-    { "src": "/app",                   "dest": "/install.html" },
-    { "src": "/admin",                 "dest": "/install.html" },
-    { "src": "/driver",                "dest": "/install.html" },
-    { "src": "/sw.js",                 "dest": "/sw.js" },
-    { "src": "/sw_driver-pwa_public.js","dest": "/sw_driver-pwa_public.js" },
-    { "src": "/manifest.json",         "dest": "/manifest.json" },
-    { "src": "/manifest-driver.json",  "dest": "/manifest-driver.json" },
-    { "src": "/(.*\\.(png|svg|ico|webp|jpg|js|css|json|txt))", "dest": "/$1" },
-    { "src": "/",                      "dest": "/index.html" },
-    { "src": "/(.*)",                  "dest": "/index.html" }
+  "buildCommand": "node build-static.js",
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/app",     "destination": "/install.html" },
+    { "source": "/admin",   "destination": "/install.html" },
+    { "source": "/driver",  "destination": "/install.html" },
+    { "source": "/download","destination": "/download.html" }
   ],
   "headers": [
     {
       "source": "/sw.js",
       "headers": [
-        { "key": "Cache-Control",         "value": "no-cache, no-store, must-revalidate" },
-        { "key": "Service-Worker-Allowed","value": "/" }
+        { "key": "Cache-Control",          "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Service-Worker-Allowed", "value": "/" }
       ]
     },
     {
       "source": "/sw_driver-pwa_public.js",
       "headers": [
-        { "key": "Cache-Control",         "value": "no-cache, no-store, must-revalidate" },
-        { "key": "Service-Worker-Allowed","value": "/" }
+        { "key": "Cache-Control",          "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Service-Worker-Allowed", "value": "/" }
       ]
     },
     {
