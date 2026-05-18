@@ -8,7 +8,7 @@ on:
 jobs:
   build-driver-apk:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - name: Checkout repository
@@ -25,51 +25,91 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Capacitor CLI + dependencies
+      # ── Build Capacitor project directory ──────────────────────────────────
+      - name: Create Capacitor project
         run: |
-          npm install -g @capacitor/cli@5
-          mkdir -p capacitor-driver
+          mkdir -p capacitor-driver/www
           cp capacitor-driver-package.json capacitor-driver/package.json
           cd capacitor-driver
           npm install
 
-      - name: Prepare www directory
+      - name: Populate www directory
         run: |
-          mkdir -p capacitor-driver/www
           cp install.html                    capacitor-driver/www/index.html
-          cp sw_driver-pwa_public.js         capacitor-driver/www/sw.js           2>/dev/null || true
-          cp manifest_driver-pwa_public.json capacitor-driver/www/manifest.json   2>/dev/null || true
+          cp sw_driver-pwa_public.js         capacitor-driver/www/sw.js            2>/dev/null || true
+          cp manifest_driver-pwa_public.json capacitor-driver/www/manifest.json    2>/dev/null || true
           [ -f icon-driver-192.png ] && cp icon-driver-192.png capacitor-driver/www/ || true
           [ -f icon-driver-512.png ] && cp icon-driver-512.png capacitor-driver/www/ || true
-          cp capacitor-driver-config.json    capacitor-driver/capacitor.config.json
 
-      - name: Add Android platform
+      - name: Write capacitor.config.json
+        run: cp capacitor-driver-config.json capacitor-driver/capacitor.config.json
+
+      # ── Add Android and let Capacitor scaffold the full project ───────────
+      - name: Add Android platform & sync
         working-directory: capacitor-driver
         run: |
           npx cap add android
           npx cap sync android
 
-      - name: Apply Android resource stubs
+      # ── Patch AndroidManifest AFTER Capacitor scaffolds it ────────────────
+      - name: Patch AndroidManifest.xml
         working-directory: capacitor-driver
         run: |
-          cp ../android-driver-manifest.xml android/app/src/main/AndroidManifest.xml
-          mkdir -p android/app/src/main/res/values
-          mkdir -p android/app/src/main/res/drawable
-          mkdir -p android/app/src/main/res/xml
-          cp ../android-driver-res/values/strings.xml android/app/src/main/res/values/strings.xml
-          cp ../android-driver-res/values/colors.xml  android/app/src/main/res/values/colors.xml
-          cp ../android-driver-res/values/styles.xml  android/app/src/main/res/values/styles.xml
-          cp ../android-driver-res/drawable/splash.xml android/app/src/main/res/drawable/splash.xml
-          cp ../android-driver-res/xml/network_security_config.xml android/app/src/main/res/xml/network_security_config.xml
+          # Merge our permissions into the Capacitor-generated manifest
+          # by appending uses-permission lines (safer than full replace)
+          python3 << 'PY'
+          import re, os
+          path = 'android/app/src/main/AndroidManifest.xml'
+          with open(path) as f:
+              content = f.read()
+          perms = [
+              'android.permission.ACCESS_FINE_LOCATION',
+              'android.permission.ACCESS_COARSE_LOCATION',
+              'android.permission.ACCESS_BACKGROUND_LOCATION',
+              'android.permission.CAMERA',
+              'android.permission.VIBRATE',
+              'android.permission.WAKE_LOCK',
+              'android.permission.RECEIVE_BOOT_COMPLETED',
+              'android.permission.POST_NOTIFICATIONS',
+              'android.permission.FOREGROUND_SERVICE',
+              'android.permission.FOREGROUND_SERVICE_LOCATION',
+          ]
+          lines = []
+          for p in perms:
+              if p not in content:
+                  lines.append(f'    <uses-permission android:name="{p}" />')
+          if lines:
+              insert = '\n'.join(lines)
+              content = content.replace('<application', insert + '\n\n    <application', 1)
+              with open(path, 'w') as f:
+                  f.write(content)
+              print('Patched', len(lines), 'permissions')
+          else:
+              print('No new permissions needed')
+          PY
 
+      # ── Copy res overrides (strings, colors, styles, drawable) ────────────
+      - name: Apply res overrides
+        working-directory: capacitor-driver
+        run: |
+          cp ../android-driver-res/values/strings.xml  android/app/src/main/res/values/strings.xml
+          cp ../android-driver-res/values/colors.xml   android/app/src/main/res/values/colors.xml
+          cp ../android-driver-res/xml/network_security_config.xml \
+             android/app/src/main/res/xml/network_security_config.xml 2>/dev/null || true
+
+      # ── Set up Android SDK (sets ANDROID_SDK_ROOT) ────────────────────────
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      # ── Gradle build ───────────────────────────────────────────────────────
       - name: Build debug APK
         working-directory: capacitor-driver/android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleDebug \
+            --no-daemon \
+            --stacktrace \
+            -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=512m"
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
@@ -77,32 +117,3 @@ jobs:
           name: fleet-apex-driver-debug-apk
           path: capacitor-driver/android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
-
-      - name: Sign & upload release APK
-        if: ${{ env.KEYSTORE_BASE64 != '' }}
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        working-directory: capacitor-driver/android
-        run: |
-          ./gradlew assembleRelease --no-daemon
-          echo "$KEYSTORE_BASE64" | base64 -d > release.jks
-          $ANDROID_SDK_ROOT/build-tools/34.0.0/apksigner sign \
-            --ks release.jks \
-            --ks-key-alias "$KEY_ALIAS" \
-            --ks-pass pass:"$KEYSTORE_PASSWORD" \
-            --key-pass pass:"$KEY_PASSWORD" \
-            --out app/build/outputs/apk/release/fleet-apex-driver-signed.apk \
-            app/build/outputs/apk/release/app-release-unsigned.apk
-
-      - name: Upload signed release APK
-        if: ${{ env.KEYSTORE_BASE64 != '' }}
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: fleet-apex-driver-release-apk
-          path: capacitor-driver/android/app/build/outputs/apk/release/fleet-apex-driver-signed.apk
-          retention-days: 90

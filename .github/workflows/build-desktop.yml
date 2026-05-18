@@ -5,11 +5,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Build all 3 platforms in parallel
 jobs:
+
   # ── Linux (.deb + .AppImage) ──────────────────────────────────────────────
   build-linux:
     runs-on: ubuntu-22.04
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
@@ -18,19 +20,18 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Linux build dependencies
+      - name: Install Linux system deps
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
             libwebkit2gtk-4.0-dev \
             build-essential \
-            curl \
-            wget \
-            file \
+            curl wget file \
             libssl-dev \
             libgtk-3-dev \
             libayatana-appindicator3-dev \
-            librsvg2-dev
+            librsvg2-dev \
+            imagemagick
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -40,29 +41,32 @@ jobs:
         with:
           workspaces: tauri-desktop/src-tauri -> target
 
-      - name: Set up Tauri project structure
+      - name: Assemble Tauri project
         run: |
           mkdir -p tauri-desktop/src-tauri/src
-          mkdir -p tauri-desktop/dist
-          cp tauri-src-main.rs    tauri-desktop/src-tauri/src/main.rs
-          cp tauri-Cargo.toml     tauri-desktop/src-tauri/Cargo.toml
-          cp tauri-conf.json      tauri-desktop/src-tauri/tauri.conf.json
-          cp tauri-package.json   tauri-desktop/package.json
-          cp install.html         tauri-desktop/dist/index.html
-          # Icons (use placeholders if not present)
           mkdir -p tauri-desktop/src-tauri/icons
-          if [ -f icon-admin-512.png ]; then
-            cp icon-admin-512.png tauri-desktop/src-tauri/icons/128x128@2x.png
-            cp icon-admin-192.png tauri-desktop/src-tauri/icons/128x128.png  2>/dev/null || true
-            cp icon-admin-48.png  tauri-desktop/src-tauri/icons/32x32.png    2>/dev/null || true
-          fi
+          mkdir -p tauri-desktop/dist
 
-      - name: Fix tauri.conf.json paths
-        working-directory: tauri-desktop
+          # Source files
+          cp tauri-src-main.rs       tauri-desktop/src-tauri/src/main.rs
+          cp tauri-build-rs.rs       tauri-desktop/src-tauri/build.rs
+          cp tauri-Cargo.toml        tauri-desktop/src-tauri/Cargo.toml
+          cp tauri-package.json      tauri-desktop/package.json
+          cp install.html            tauri-desktop/dist/index.html
+
+          # Generate all required icons from PNG using ImageMagick
+          convert icon-admin-512.png -resize 32x32   tauri-desktop/src-tauri/icons/32x32.png
+          convert icon-admin-512.png -resize 128x128  tauri-desktop/src-tauri/icons/128x128.png
+          convert icon-admin-512.png -resize 256x256  tauri-desktop/src-tauri/icons/128x128@2x.png
+          convert icon-admin-512.png -resize 256x256  tauri-desktop/src-tauri/icons/icon.png
+          # Linux doesn't need .ico or .icns — skip those
+          echo "Icons generated"
+
+      - name: Write tauri.conf.json (Linux)
         run: |
           node -e "
             const fs = require('fs');
-            const conf = JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json','utf8'));
+            const conf = JSON.parse(fs.readFileSync('tauri-conf.json','utf8'));
             conf.build.distDir = '../dist';
             conf.build.devPath  = '../dist';
             conf.tauri.bundle.icon = [
@@ -70,17 +74,14 @@ jobs:
               'icons/128x128.png',
               'icons/128x128@2x.png'
             ];
-            fs.writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(conf, null, 2));
-            console.log('tauri.conf.json updated');
+            conf.tauri.bundle.targets = ['deb','appimage'];
+            fs.writeFileSync('tauri-desktop/src-tauri/tauri.conf.json', JSON.stringify(conf, null, 2));
+            console.log('tauri.conf.json written');
           "
 
-      - name: Install npm dependencies
+      - name: Install npm deps + Tauri CLI
         working-directory: tauri-desktop
         run: npm install
-
-      - name: Install Tauri CLI
-        working-directory: tauri-desktop
-        run: npm install --save-dev @tauri-apps/cli@1
 
       - name: Build Linux bundles
         working-directory: tauri-desktop
@@ -89,14 +90,14 @@ jobs:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 
-      - name: Upload Linux .deb
+      - name: Upload .deb
         uses: actions/upload-artifact@v4
         with:
           name: fleet-apex-linux-deb
           path: tauri-desktop/src-tauri/target/release/bundle/deb/*.deb
           retention-days: 30
 
-      - name: Upload Linux .AppImage
+      - name: Upload .AppImage
         uses: actions/upload-artifact@v4
         with:
           name: fleet-apex-linux-appimage
@@ -105,8 +106,8 @@ jobs:
 
   # ── Windows (.msi + .exe) ─────────────────────────────────────────────────
   build-windows:
-    runs-on: windows-latest
-    timeout-minutes: 60
+    runs-on: windows-2022
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
@@ -123,41 +124,51 @@ jobs:
         with:
           workspaces: tauri-desktop/src-tauri -> target
 
-      - name: Set up Tauri project structure
+      - name: Assemble Tauri project
         shell: bash
         run: |
           mkdir -p tauri-desktop/src-tauri/src
-          mkdir -p tauri-desktop/dist
           mkdir -p tauri-desktop/src-tauri/icons
+          mkdir -p tauri-desktop/dist
+
           cp tauri-src-main.rs    tauri-desktop/src-tauri/src/main.rs
+          cp tauri-build-rs.rs    tauri-desktop/src-tauri/build.rs
           cp tauri-Cargo.toml     tauri-desktop/src-tauri/Cargo.toml
-          cp tauri-conf.json      tauri-desktop/src-tauri/tauri.conf.json
           cp tauri-package.json   tauri-desktop/package.json
           cp install.html         tauri-desktop/dist/index.html
-          [ -f icon-admin-512.png ] && cp icon-admin-512.png tauri-desktop/src-tauri/icons/128x128@2x.png || true
-          [ -f icon-admin-192.png ] && cp icon-admin-192.png tauri-desktop/src-tauri/icons/128x128.png || true
-          [ -f icon-admin-48.png  ] && cp icon-admin-48.png  tauri-desktop/src-tauri/icons/32x32.png   || true
+          cp icon-admin-512.png   tauri-desktop/src-tauri/icons/128x128@2x.png
+          cp icon-admin-192.png   tauri-desktop/src-tauri/icons/128x128.png
+          cp icon-admin-48.png    tauri-desktop/src-tauri/icons/32x32.png
 
-      - name: Fix tauri.conf.json paths
-        working-directory: tauri-desktop
+      - name: Generate Windows icon (.ico) via Node
+        shell: bash
+        working-directory: tauri-desktop/src-tauri/icons
+        run: |
+          # Use sharp or fallback to copying PNG as ico (Windows bundler accepts PNG-based ico)
+          npm install -g png-to-ico 2>/dev/null || true
+          png-to-ico 128x128@2x.png > icon.ico 2>/dev/null || cp 128x128@2x.png icon.ico
+
+      - name: Write tauri.conf.json (Windows)
         shell: bash
         run: |
           node -e "
             const fs = require('fs');
-            const conf = JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json','utf8'));
+            const conf = JSON.parse(fs.readFileSync('tauri-conf.json','utf8'));
             conf.build.distDir = '../dist';
             conf.build.devPath  = '../dist';
-            conf.tauri.bundle.icon = ['icons/32x32.png','icons/128x128.png','icons/128x128@2x.png'];
-            fs.writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(conf, null, 2));
+            conf.tauri.bundle.icon = [
+              'icons/32x32.png',
+              'icons/128x128.png',
+              'icons/128x128@2x.png',
+              'icons/icon.ico'
+            ];
+            conf.tauri.bundle.targets = ['msi','nsis'];
+            fs.writeFileSync('tauri-desktop/src-tauri/tauri.conf.json', JSON.stringify(conf, null, 2));
           "
 
-      - name: Install npm dependencies
+      - name: Install npm deps + Tauri CLI
         working-directory: tauri-desktop
         run: npm install
-
-      - name: Install Tauri CLI
-        working-directory: tauri-desktop
-        run: npm install --save-dev @tauri-apps/cli@1
 
       - name: Build Windows installer
         working-directory: tauri-desktop
@@ -183,7 +194,7 @@ jobs:
   # ── macOS (.dmg) ──────────────────────────────────────────────────────────
   build-macos:
     runs-on: macos-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
@@ -202,39 +213,58 @@ jobs:
         with:
           workspaces: tauri-desktop/src-tauri -> target
 
-      - name: Set up Tauri project structure
+      - name: Assemble Tauri project
         run: |
           mkdir -p tauri-desktop/src-tauri/src
-          mkdir -p tauri-desktop/dist
           mkdir -p tauri-desktop/src-tauri/icons
+          mkdir -p tauri-desktop/dist
+
           cp tauri-src-main.rs    tauri-desktop/src-tauri/src/main.rs
+          cp tauri-build-rs.rs    tauri-desktop/src-tauri/build.rs
           cp tauri-Cargo.toml     tauri-desktop/src-tauri/Cargo.toml
-          cp tauri-conf.json      tauri-desktop/src-tauri/tauri.conf.json
           cp tauri-package.json   tauri-desktop/package.json
           cp install.html         tauri-desktop/dist/index.html
-          [ -f icon-admin-512.png ] && cp icon-admin-512.png tauri-desktop/src-tauri/icons/128x128@2x.png || true
-          [ -f icon-admin-192.png ] && cp icon-admin-192.png tauri-desktop/src-tauri/icons/128x128.png || true
-          [ -f icon-admin-48.png  ] && cp icon-admin-48.png  tauri-desktop/src-tauri/icons/32x32.png   || true
+          cp icon-admin-512.png   tauri-desktop/src-tauri/icons/128x128@2x.png
+          cp icon-admin-192.png   tauri-desktop/src-tauri/icons/128x128.png
+          cp icon-admin-48.png    tauri-desktop/src-tauri/icons/32x32.png
 
-      - name: Fix tauri.conf.json paths
-        working-directory: tauri-desktop
+      - name: Generate macOS .icns via sips + iconutil
+        run: |
+          ICONSET="tauri-desktop/src-tauri/icons/AppIcon.iconset"
+          mkdir -p "$ICONSET"
+          sips -z 16   16   icon-admin-512.png --out "$ICONSET/icon_16x16.png"
+          sips -z 32   32   icon-admin-512.png --out "$ICONSET/icon_16x16@2x.png"
+          sips -z 32   32   icon-admin-512.png --out "$ICONSET/icon_32x32.png"
+          sips -z 64   64   icon-admin-512.png --out "$ICONSET/icon_32x32@2x.png"
+          sips -z 128  128  icon-admin-512.png --out "$ICONSET/icon_128x128.png"
+          sips -z 256  256  icon-admin-512.png --out "$ICONSET/icon_128x128@2x.png"
+          sips -z 256  256  icon-admin-512.png --out "$ICONSET/icon_256x256.png"
+          sips -z 512  512  icon-admin-512.png --out "$ICONSET/icon_256x256@2x.png"
+          sips -z 512  512  icon-admin-512.png --out "$ICONSET/icon_512x512.png"
+          cp icon-admin-512.png "$ICONSET/icon_512x512@2x.png"
+          iconutil -c icns "$ICONSET" -o tauri-desktop/src-tauri/icons/icon.icns
+          echo "Generated icon.icns"
+
+      - name: Write tauri.conf.json (macOS)
         run: |
           node -e "
             const fs = require('fs');
-            const conf = JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json','utf8'));
+            const conf = JSON.parse(fs.readFileSync('tauri-conf.json','utf8'));
             conf.build.distDir = '../dist';
             conf.build.devPath  = '../dist';
-            conf.tauri.bundle.icon = ['icons/32x32.png','icons/128x128.png','icons/128x128@2x.png'];
-            fs.writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(conf, null, 2));
+            conf.tauri.bundle.icon = [
+              'icons/32x32.png',
+              'icons/128x128.png',
+              'icons/128x128@2x.png',
+              'icons/icon.icns'
+            ];
+            conf.tauri.bundle.targets = ['dmg'];
+            fs.writeFileSync('tauri-desktop/src-tauri/tauri.conf.json', JSON.stringify(conf, null, 2));
           "
 
-      - name: Install npm dependencies
+      - name: Install npm deps + Tauri CLI
         working-directory: tauri-desktop
         run: npm install
-
-      - name: Install Tauri CLI
-        working-directory: tauri-desktop
-        run: npm install --save-dev @tauri-apps/cli@1
 
       - name: Build macOS DMG (universal binary)
         working-directory: tauri-desktop
@@ -243,7 +273,7 @@ jobs:
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 
-      - name: Upload macOS DMG
+      - name: Upload macOS .dmg
         uses: actions/upload-artifact@v4
         with:
           name: fleet-apex-macos-dmg
