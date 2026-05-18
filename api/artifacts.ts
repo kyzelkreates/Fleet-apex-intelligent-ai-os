@@ -11,7 +11,20 @@ function fmtSize(bytes: number): string {
   return `${(bytes / 1024).toFixed(0)} KB`;
 }
 
-async function ghFetch(path: string) {
+interface GitHubRun {
+  id: number;
+  head_sha: string;
+  created_at: string;
+}
+
+interface GitHubArtifact {
+  id: number;
+  name: string;
+  size_in_bytes: number;
+  expired: boolean;
+}
+
+async function ghFetch(path: string): Promise<any> {
   const res = await fetch(`https://api.github.com${path}`, {
     headers: {
       Authorization: `Bearer ${TOKEN}`,
@@ -21,7 +34,7 @@ async function ghFetch(path: string) {
     },
   });
   if (!res.ok) throw new Error(`GitHub API ${res.status}: ${path}`);
-  return res.json();
+  return res.json() as Promise<any>;
 }
 
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
@@ -31,8 +44,8 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
   try {
     const runsData = await ghFetch(
       `/repos/${OWNER}/${REPO}/actions/runs?per_page=20&status=success`
-    );
-    const runs: any[] = runsData.workflow_runs || [];
+    ) as { workflow_runs?: GitHubRun[] };
+    const runs: GitHubRun[] = runsData.workflow_runs || [];
 
     const nameMap: Record<string, string> = {
       'fleet-apex-admin-debug-apk':  'adminApk',
@@ -51,8 +64,8 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
       if (found.size >= Object.keys(nameMap).length) break;
       const artsData = await ghFetch(
         `/repos/${OWNER}/${REPO}/actions/runs/${run.id}/artifacts`
-      );
-      for (const art of artsData.artifacts || []) {
+      ) as { artifacts?: GitHubArtifact[] };
+      for (const art of (artsData.artifacts || [])) {
         const key = nameMap[art.name];
         if (key && !result[key] && !art.expired) {
           result[key] = {

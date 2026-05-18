@@ -18,7 +18,17 @@ const FILE_NAMES: Record<string, string> = {
   driver: 'FleetApex-Driver-App.apk',
 };
 
-async function ghFetch(path: string, opts: RequestInit = {}) {
+interface GitHubRun {
+  id: number;
+}
+
+interface GitHubArtifact {
+  id: number;
+  name: string;
+  expired: boolean;
+}
+
+async function ghFetch(path: string, opts: RequestInit = {}): Promise<Response> {
   return fetch(`https://api.github.com${path}`, {
     ...opts,
     headers: {
@@ -26,7 +36,7 @@ async function ghFetch(path: string, opts: RequestInit = {}) {
       Accept: 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28',
       'User-Agent': 'fleet-apex-vercel',
-      ...(opts.headers || {}),
+      ...(opts.headers as Record<string, string> || {}),
     },
   });
 }
@@ -46,16 +56,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // 1. Find the latest non-expired artifact
     const runsRes  = await ghFetch(`/repos/${OWNER}/${REPO}/actions/runs?per_page=20&status=success`);
-    const runsData = await runsRes.json();
-    const runs: any[] = runsData.workflow_runs || [];
+    const runsData = await runsRes.json() as { workflow_runs?: GitHubRun[] };
+    const runs: GitHubRun[] = runsData.workflow_runs || [];
 
     let artifactId: number | null = null;
 
     for (const run of runs) {
       if (artifactId) break;
       const artsRes  = await ghFetch(`/repos/${OWNER}/${REPO}/actions/runs/${run.id}/artifacts`);
-      const artsData = await artsRes.json();
-      for (const art of artsData.artifacts || []) {
+      const artsData = await artsRes.json() as { artifacts?: GitHubArtifact[] };
+      for (const art of (artsData.artifacts || [])) {
         if (art.name === artifactName && !art.expired) {
           artifactId = art.id;
           break;
@@ -96,7 +106,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const zipBuffer = Buffer.from(arrayBuf);
 
     // 5. Extract the .apk from the zip in memory
-    // The zip contains a single .apk file — find it
     const apkBuffer = extractApkFromZip(zipBuffer);
 
     if (!apkBuffer) {
@@ -146,6 +155,7 @@ function extractApkFromZip(zip: Buffer): Buffer | null {
           return zip.slice(dataStart, dataStart + uncompSize);
         } else if (compression === 8) {
           // Deflate
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
           const zlib = require('zlib');
           const compressed = zip.slice(dataStart, dataStart + compSize);
           return zlib.inflateRawSync(compressed);
