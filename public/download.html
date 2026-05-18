@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <meta name="description" content="Download Fleet Apex — Admin Dashboard, Driver App, and Desktop. Free. No account needed."/>
+  <meta name="description" content="Download Fleet Apex — Admin Dashboard, Driver App, Desktop. Free."/>
   <title>Download Fleet Apex Apps</title>
   <style>
     :root{
@@ -15,424 +15,342 @@
     *{margin:0;padding:0;box-sizing:border-box;}
     body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
 
-    /* NAV */
-    nav{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:18px 5%;background:rgba(5,14,26,.95);
-      border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;
-    }
+    nav{display:flex;align-items:center;justify-content:space-between;padding:18px 5%;background:rgba(5,14,26,.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
     .nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.05rem;color:var(--accent);text-decoration:none;}
     .nav-logo img{width:32px;height:32px;border-radius:8px;}
-    .nav-back{color:var(--muted);text-decoration:none;font-size:.88rem;display:flex;align-items:center;gap:6px;}
+    .nav-back{color:var(--muted);text-decoration:none;font-size:.88rem;}
     .nav-back:hover{color:var(--accent);}
 
-    /* HERO */
-    .hero{
-      text-align:center;padding:80px 5% 48px;
-      background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(0,212,255,.07) 0%,transparent 70%);
-    }
-    .hero-badge{
-      display:inline-flex;align-items:center;gap:8px;
-      background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.2);
-      color:var(--green);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
-      padding:7px 16px;border-radius:99px;margin-bottom:24px;
-    }
+    .hero{text-align:center;padding:72px 5% 40px;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(0,212,255,.07) 0%,transparent 70%);}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.2);color:var(--green);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:7px 16px;border-radius:99px;margin-bottom:22px;}
     .hero-badge span{width:7px;height:7px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-    h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;letter-spacing:-.5px;line-height:1.1;margin-bottom:14px;}
+    h1{font-size:clamp(1.9rem,5vw,3.2rem);font-weight:900;letter-spacing:-.5px;line-height:1.1;margin-bottom:12px;}
     .grad{background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto 16px;}
-    .build-info{
-      display:inline-flex;align-items:center;gap:10px;
-      background:rgba(10,22,40,.8);border:1px solid var(--border);
-      border-radius:8px;padding:8px 18px;font-size:.82rem;color:var(--muted);
-      margin-top:8px;
-    }
-    .build-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+    .hero p{color:var(--muted);font-size:1rem;max-width:520px;margin:0 auto;}
 
-    /* MAIN GRID */
-    .dl-section{max-width:1100px;margin:0 auto;padding:48px 5% 80px;}
-    .apps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:1080px;margin:48px auto 80px;padding:0 5%;}
 
-    /* APP CARD */
-    .app-card{
-      background:var(--bg2);border:1px solid var(--border);
-      border-radius:18px;overflow:hidden;
-      transition:transform .2s,border-color .2s;
-    }
-    .app-card:hover{transform:translateY(-3px);}
-    .app-card.admin{border-color:rgba(0,212,255,.2);}
-    .app-card.driver{border-color:rgba(123,97,255,.2);}
-    .app-card.desktop{border-color:rgba(255,184,0,.2);}
+    .card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:transform .2s,border-color .2s;}
+    .card:hover{transform:translateY(-3px);}
+    .card.admin{border-color:rgba(0,212,255,.2);}
+    .card.driver{border-color:rgba(123,97,255,.2);}
+    .card.desktop{border-color:rgba(255,184,0,.2);}
 
-    .card-header{padding:28px 28px 20px;display:flex;align-items:center;gap:18px;}
-    .app-icon{
-      width:64px;height:64px;border-radius:16px;
-      display:flex;align-items:center;justify-content:center;font-size:1.9rem;flex-shrink:0;
-    }
-    .admin .app-icon{background:linear-gradient(135deg,rgba(0,212,255,.2),rgba(0,212,255,.05));border:1px solid rgba(0,212,255,.3);}
-    .driver .app-icon{background:linear-gradient(135deg,rgba(123,97,255,.2),rgba(123,97,255,.05));border:1px solid rgba(123,97,255,.3);}
-    .desktop .app-icon{background:linear-gradient(135deg,rgba(255,184,0,.2),rgba(255,184,0,.05));border:1px solid rgba(255,184,0,.3);}
+    .card-head{padding:26px 26px 16px;display:flex;align-items:center;gap:16px;}
+    .app-icon{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;}
+    .admin .app-icon{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.25);}
+    .driver .app-icon{background:rgba(123,97,255,.1);border:1px solid rgba(123,97,255,.25);}
+    .desktop .app-icon{background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);}
 
-    .card-title-block{}
-    .card-title{font-size:1.2rem;font-weight:800;margin-bottom:3px;}
-    .admin .card-title{color:var(--accent);}
-    .driver .card-title{color:var(--purple);}
-    .desktop .card-title{color:var(--amber);}
-    .card-subtitle{font-size:.82rem;color:var(--muted);}
+    .card-name{font-size:1.15rem;font-weight:800;}
+    .admin .card-name{color:var(--accent);}
+    .driver .card-name{color:var(--purple);}
+    .desktop .card-name{color:var(--amber);}
+    .card-sub{font-size:.8rem;color:var(--muted);margin-top:2px;}
 
-    .card-desc{padding:0 28px 20px;color:#8aafc8;font-size:.9rem;line-height:1.65;}
+    .card-desc{padding:0 26px 18px;color:#8aafc8;font-size:.88rem;line-height:1.6;}
 
-    .card-features{
-      margin:0 28px 24px;
-      display:flex;flex-wrap:wrap;gap:8px;
-    }
-    .feat-pill{
-      font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;
-      padding:4px 10px;border-radius:99px;
-      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:var(--muted);
-    }
+    .card-btns{border-top:1px solid var(--border);padding:18px 26px 22px;display:flex;flex-direction:column;gap:10px;}
 
-    .card-downloads{
-      border-top:1px solid var(--border);padding:20px 28px 24px;
-      display:flex;flex-direction:column;gap:10px;
-    }
+    /* THE DOWNLOAD BUTTON */
     .dl-btn{
       display:flex;align-items:center;justify-content:space-between;
-      padding:13px 18px;border-radius:10px;text-decoration:none;
-      font-weight:600;font-size:.9rem;transition:opacity .2s,transform .15s;
-      border:1px solid transparent;
+      padding:14px 18px;border-radius:11px;text-decoration:none;cursor:pointer;
+      font-weight:700;font-size:.92rem;border:none;width:100%;
+      transition:filter .15s,transform .1s;
     }
-    .dl-btn:hover{opacity:.88;transform:scale(1.01);}
+    .dl-btn:hover{filter:brightness(1.15);transform:scale(1.01);}
+    .dl-btn:active{transform:scale(.98);}
     .dl-btn .left{display:flex;align-items:center;gap:10px;}
-    .dl-btn .badge{
-      font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;
-      padding:3px 8px;border-radius:99px;
-    }
+    .dl-btn .tag{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:99px;}
 
-    /* button colours */
-    .btn-pwa-admin{background:rgba(0,212,255,.12);border-color:rgba(0,212,255,.25);color:var(--accent);}
-    .btn-pwa-admin .badge{background:rgba(0,212,255,.2);color:var(--accent);}
+    .btn-apk-admin{background:linear-gradient(135deg,rgba(0,255,136,.18),rgba(0,200,100,.1));border:1px solid rgba(0,255,136,.35)!important;color:var(--green);}
+    .btn-apk-admin .tag{background:rgba(0,255,136,.2);color:var(--green);}
 
-    .btn-pwa-driver{background:rgba(123,97,255,.12);border-color:rgba(123,97,255,.25);color:var(--purple);}
-    .btn-pwa-driver .badge{background:rgba(123,97,255,.2);color:var(--purple);}
+    .btn-apk-driver{background:linear-gradient(135deg,rgba(123,97,255,.18),rgba(90,60,200,.1));border:1px solid rgba(123,97,255,.35)!important;color:#a08fff;}
+    .btn-apk-driver .tag{background:rgba(123,97,255,.2);color:#a08fff;}
 
-    .btn-android-admin{background:rgba(0,255,136,.12);border-color:rgba(0,255,136,.25);color:var(--green);}
-    .btn-android-admin .badge{background:rgba(0,255,136,.2);color:var(--green);}
+    .btn-pwa{background:rgba(255,255,255,.05);border:1px solid var(--border)!important;color:var(--muted);}
+    .btn-pwa:hover{color:var(--text);}
+    .btn-pwa .tag{background:rgba(255,255,255,.07);color:var(--muted);}
 
-    .btn-android-driver{background:rgba(123,97,255,.15);border-color:rgba(123,97,255,.3);color:#a08fff;}
-    .btn-android-driver .badge{background:rgba(123,97,255,.2);color:#a08fff;}
+    .btn-desktop{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.2)!important;color:var(--amber);}
+    .btn-desktop .tag{background:rgba(255,184,0,.15);color:var(--amber);}
 
-    .btn-windows{background:rgba(0,212,255,.08);border-color:var(--border);color:var(--text);}
-    .btn-windows .badge{background:rgba(255,255,255,.08);color:var(--muted);}
+    .btn-soon{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)!important;color:var(--muted);cursor:not-allowed;opacity:.55;}
 
-    .btn-macos{background:rgba(255,255,255,.05);border-color:var(--border);color:var(--text);}
-    .btn-macos .badge{background:rgba(255,255,255,.08);color:var(--muted);}
+    /* Progress bar */
+    .dl-progress{display:none;height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin-top:6px;}
+    .dl-progress.active{display:block;}
+    .dl-bar{height:100%;width:0%;border-radius:99px;transition:width .3s;animation:indeterminate 1.4s ease infinite;}
+    .admin-bar{background:var(--green);}
+    .driver-bar{background:var(--purple);}
+    @keyframes indeterminate{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
 
-    .btn-linux{background:rgba(255,184,0,.08);border-color:rgba(255,184,0,.15);color:var(--amber);}
-    .btn-linux .badge{background:rgba(255,184,0,.15);color:var(--amber);}
+    .dl-status{font-size:.75rem;color:var(--muted);margin-top:4px;min-height:16px;text-align:center;}
 
-    .btn-coming{
-      background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06);
-      color:var(--muted);cursor:not-allowed;opacity:.6;
-    }
+    /* Android tip */
+    .tip{margin:0 26px 18px;background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.15);border-radius:8px;padding:11px 14px;font-size:.8rem;color:#c8a840;line-height:1.5;}
+    .tip strong{color:var(--amber);}
 
-    /* size badge on right */
-    .dl-size{font-size:.76rem;color:var(--muted);font-weight:400;}
+    /* How to section */
+    .how{max-width:880px;margin:0 auto;padding:0 5% 80px;}
+    .how h2{font-size:1.3rem;font-weight:800;margin-bottom:28px;text-align:center;}
+    .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;}
+    .how-step{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;}
+    .step-num{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.9rem;margin:0 auto 10px;color:#050E1A;}
+    .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:5px;}
+    .how-step p{font-size:.8rem;color:var(--muted);line-height:1.5;}
 
-    /* instructions */
-    .install-note{
-      margin:0 28px 20px;
-      background:rgba(255,184,0,.06);border:1px solid rgba(255,184,0,.15);
-      border-radius:8px;padding:12px 14px;font-size:.82rem;color:#c8a840;line-height:1.5;
-    }
-    .install-note strong{color:var(--amber);}
-
-    /* HOW IT WORKS */
-    .how-section{max-width:900px;margin:0 auto;padding:0 5% 80px;}
-    .how-title{font-size:1.4rem;font-weight:800;margin-bottom:32px;text-align:center;color:var(--text);}
-    .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;}
-    .how-card{
-      background:var(--bg2);border:1px solid var(--border);border-radius:12px;
-      padding:22px;text-align:center;
-    }
-    .how-num{
-      width:36px;height:36px;border-radius:50%;
-      background:linear-gradient(135deg,var(--accent),var(--purple));
-      display:flex;align-items:center;justify-content:center;
-      font-weight:900;font-size:.95rem;margin:0 auto 12px;color:#050E1A;
-    }
-    .how-card h3{font-size:.95rem;font-weight:700;margin-bottom:6px;}
-    .how-card p{font-size:.84rem;color:var(--muted);line-height:1.55;}
-
-    /* FOOTER */
-    footer{
-      border-top:1px solid var(--border);padding:32px 5%;text-align:center;
-      font-size:.82rem;color:var(--muted);
-    }
+    footer{border-top:1px solid var(--border);padding:28px 5%;text-align:center;font-size:.8rem;color:var(--muted);}
     footer a{color:var(--accent);text-decoration:none;}
 
-    /* Loading state */
-    .loading-spinner{
-      display:inline-block;width:16px;height:16px;
-      border:2px solid rgba(255,255,255,.1);border-top-color:var(--accent);
-      border-radius:50%;animation:spin .6s linear infinite;margin-right:8px;
-      vertical-align:middle;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-
     @media(max-width:600px){
-      h1{font-size:1.9rem;}
-      .card-header{flex-direction:column;align-items:flex-start;gap:12px;}
+      .card-head{flex-direction:column;align-items:flex-start;gap:10px;}
+      h1{font-size:1.8rem;}
     }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="/" class="nav-logo">
     <img src="/icon-admin-192.png" alt="Fleet Apex"/>
     Fleet Apex
   </a>
-  <a href="/" class="nav-back">← Back to home</a>
+  <a href="/" class="nav-back">← Home</a>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
-  <div class="hero-badge"><span></span> All builds verified · Free to download</div>
+  <div class="hero-badge"><span></span> Builds verified · Direct download</div>
   <h1>Download <span class="grad">Fleet Apex</span></h1>
-  <p>Three apps. Every platform. Pick yours and get started in minutes.</p>
-  <div class="build-info">
-    <div class="build-dot"></div>
-    <span id="build-status">Checking latest build…</span>
-  </div>
+  <p>Pick your app. Tap download. That's it — no account needed.</p>
 </div>
 
-<!-- DOWNLOAD CARDS -->
-<div class="dl-section">
-  <div class="apps-grid">
+<div class="grid">
 
-    <!-- ADMIN DASHBOARD -->
-    <div class="app-card admin">
-      <div class="card-header">
-        <div class="app-icon">🖥️</div>
-        <div class="card-title-block">
-          <div class="card-title">Admin Dashboard</div>
-          <div class="card-subtitle">Fleet Control Centre</div>
-        </div>
-      </div>
-      <div class="card-desc">
-        The full command centre for fleet managers. Live map, vehicle & driver CRUD, AI Command Centre, 
-        compliance dashboard, white-label controls, plugin manager, and real-time messaging — all in one.
-      </div>
-      <div class="card-features">
-        <span class="feat-pill">Live Map</span>
-        <span class="feat-pill">AI Command Centre</span>
-        <span class="feat-pill">Compliance</span>
-        <span class="feat-pill">White-Label</span>
-        <span class="feat-pill">Offline-first</span>
-      </div>
-      <div class="card-downloads">
-        <a href="/app?mode=admin" class="dl-btn btn-pwa-admin" target="_blank">
-          <div class="left">🌐 <span>Open in Browser (PWA)</span></div>
-          <span class="badge">Instant</span>
-        </a>
-        <a href="#" id="admin-apk-btn" class="dl-btn btn-android-admin">
-          <div class="left"><span class="loading-spinner"></span> <span>Android APK</span></div>
-          <span class="dl-size" id="admin-apk-size">~5.6 MB</span>
-        </a>
-        <a href="#" class="dl-btn btn-coming" onclick="return false;">
-          <div class="left">🍎 <span>iOS — App Store (coming soon)</span></div>
-          <span class="badge">Soon</span>
-        </a>
-      </div>
-      <div class="install-note">
-        <strong>Android install tip:</strong> Go to Settings → Security → enable <em>"Install from unknown sources"</em> before installing the APK.
+  <!-- ── ADMIN DASHBOARD ── -->
+  <div class="card admin">
+    <div class="card-head">
+      <div class="app-icon">🖥️</div>
+      <div>
+        <div class="card-name">Admin Dashboard</div>
+        <div class="card-sub">Fleet Control Centre</div>
       </div>
     </div>
-
-    <!-- DRIVER APP -->
-    <div class="app-card driver">
-      <div class="card-header">
-        <div class="app-icon">🚛</div>
-        <div class="card-title-block">
-          <div class="card-title">Driver App</div>
-          <div class="card-subtitle">Built for the cab</div>
-        </div>
-      </div>
-      <div class="card-desc">
-        Everything a driver needs — route navigation, hazard reporting, trip planner with vehicle 
-        specs, emergency SOS, tachograph check-in, and direct messaging with dispatch. Works offline.
-      </div>
-      <div class="card-features">
-        <span class="feat-pill">Navigation</span>
-        <span class="feat-pill">Hazard Reports</span>
-        <span class="feat-pill">Trip Planner</span>
-        <span class="feat-pill">Emergency SOS</span>
-        <span class="feat-pill">Tachograph</span>
-      </div>
-      <div class="card-downloads">
-        <a href="/app?mode=driver" class="dl-btn btn-pwa-driver" target="_blank">
-          <div class="left">🌐 <span>Open in Browser (PWA)</span></div>
-          <span class="badge">Instant</span>
-        </a>
-        <a href="#" id="driver-apk-btn" class="dl-btn btn-android-driver">
-          <div class="left"><span class="loading-spinner"></span> <span>Android APK</span></div>
-          <span class="dl-size" id="driver-apk-size">~5.6 MB</span>
-        </a>
-        <a href="#" class="dl-btn btn-coming" onclick="return false;">
-          <div class="left">🍎 <span>iOS — App Store (coming soon)</span></div>
-          <span class="badge">Soon</span>
-        </a>
-      </div>
-      <div class="install-note">
-        <strong>Android install tip:</strong> Go to Settings → Security → enable <em>"Install from unknown sources"</em> before installing the APK.
-      </div>
+    <div class="card-desc">
+      Live map, vehicle &amp; driver management, AI Command Centre, compliance dashboard,
+      real-time messaging, white-label controls. Full fleet oversight in one place.
     </div>
+    <div class="card-btns">
 
-    <!-- DESKTOP -->
-    <div class="app-card desktop">
-      <div class="card-header">
-        <div class="app-icon">💻</div>
-        <div class="card-title-block">
-          <div class="card-title">Desktop App</div>
-          <div class="card-subtitle">Windows · macOS · Linux</div>
-        </div>
+      <!-- DIRECT APK DOWNLOAD -->
+      <button class="dl-btn btn-apk-admin" onclick="downloadApk('admin', this)">
+        <div class="left">🤖 <span>Download Android APK</span></div>
+        <span class="tag">~5.7 MB</span>
+      </button>
+      <div class="dl-progress" id="admin-progress">
+        <div class="dl-bar admin-bar"></div>
       </div>
-      <div class="card-desc">
-        The full Fleet Apex Admin Dashboard as a native desktop application. Runs on Windows, macOS, 
-        and Linux. Powered by Tauri — lightweight, fast, and works without a browser tab.
-      </div>
-      <div class="card-features">
-        <span class="feat-pill">Native App</span>
-        <span class="feat-pill">System Tray</span>
-        <span class="feat-pill">Offline</span>
-        <span class="feat-pill">Auto-update</span>
-        <span class="feat-pill">All platforms</span>
-      </div>
-      <div class="card-downloads">
-        <a href="#" id="windows-btn" class="dl-btn btn-windows">
-          <div class="left">🪟 <span>Windows Installer (.exe)</span></div>
-          <span class="dl-size" id="windows-size">Building…</span>
-        </a>
-        <a href="#" id="macos-btn" class="dl-btn btn-macos">
-          <div class="left">🍎 <span>macOS DMG (Universal)</span></div>
-          <span class="dl-size" id="macos-size">Building…</span>
-        </a>
-        <a href="#" id="linux-btn" class="dl-btn btn-linux">
-          <div class="left">🐧 <span>Linux (.deb / .AppImage)</span></div>
-          <span class="dl-size" id="linux-size">Building…</span>
-        </a>
-      </div>
-      <div class="install-note" style="color:#9a7f30;background:rgba(255,184,0,.04);">
-        <strong>Desktop builds:</strong> macOS and Linux builds are available above. Windows installer is being finalised.
-      </div>
+      <div class="dl-status" id="admin-status"></div>
+
+      <a href="/app?mode=admin" class="dl-btn btn-pwa" target="_blank">
+        <div class="left">🌐 <span>Open Web App (PWA)</span></div>
+        <span class="tag">Instant</span>
+      </a>
+
+      <button class="dl-btn btn-soon" disabled>
+        <div class="left">🍎 <span>iOS — App Store (coming soon)</span></div>
+      </button>
     </div>
-
+    <div class="tip">
+      <strong>First time installing?</strong> On Android go to
+      <em>Settings → Security → Install unknown apps</em> and allow your browser.
+    </div>
   </div>
+
+  <!-- ── DRIVER APP ── -->
+  <div class="card driver">
+    <div class="card-head">
+      <div class="app-icon">🚛</div>
+      <div>
+        <div class="card-name">Driver App</div>
+        <div class="card-sub">Built for the cab</div>
+      </div>
+    </div>
+    <div class="card-desc">
+      Navigation, hazard reporting, trip planner, emergency SOS, tachograph check-in,
+      and direct messaging with dispatch. Works offline. Built for HGV drivers.
+    </div>
+    <div class="card-btns">
+
+      <button class="dl-btn btn-apk-driver" onclick="downloadApk('driver', this)">
+        <div class="left">🚛 <span>Download Android APK</span></div>
+        <span class="tag">~5.7 MB</span>
+      </button>
+      <div class="dl-progress" id="driver-progress">
+        <div class="dl-bar driver-bar"></div>
+      </div>
+      <div class="dl-status" id="driver-status"></div>
+
+      <a href="/app?mode=driver" class="dl-btn btn-pwa" target="_blank">
+        <div class="left">🌐 <span>Open Web App (PWA)</span></div>
+        <span class="tag">Instant</span>
+      </a>
+
+      <button class="dl-btn btn-soon" disabled>
+        <div class="left">🍎 <span>iOS — App Store (coming soon)</span></div>
+      </button>
+    </div>
+    <div class="tip">
+      <strong>First time installing?</strong> On Android go to
+      <em>Settings → Security → Install unknown apps</em> and allow your browser.
+    </div>
+  </div>
+
+  <!-- ── DESKTOP ── -->
+  <div class="card desktop">
+    <div class="card-head">
+      <div class="app-icon">💻</div>
+      <div>
+        <div class="card-name">Desktop App</div>
+        <div class="card-sub">Windows · macOS · Linux</div>
+      </div>
+    </div>
+    <div class="card-desc">
+      Full Fleet Apex Admin Dashboard as a native desktop app powered by Tauri.
+      Lightweight, offline-capable, system tray support. Runs on all 3 platforms.
+    </div>
+    <div class="card-btns" id="desktop-btns">
+      <div class="dl-status" id="desktop-status" style="text-align:left;padding:4px 0;">
+        <span style="opacity:.5">⏳ Checking for desktop builds…</span>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- HOW TO INSTALL -->
-<div class="how-section">
-  <div class="how-title">How to install on Android</div>
+<div class="how">
+  <h2>How to install the APK on Android</h2>
   <div class="how-grid">
-    <div class="how-card">
-      <div class="how-num">1</div>
-      <h3>Download the APK</h3>
-      <p>Tap the Android APK button above. The file will download to your phone's Downloads folder.</p>
+    <div class="how-step">
+      <div class="step-num">1</div>
+      <h3>Tap Download</h3>
+      <p>Press the green or purple download button above. The .apk file downloads to your device.</p>
     </div>
-    <div class="how-card">
-      <div class="how-num">2</div>
-      <h3>Allow unknown sources</h3>
-      <p>Go to <em>Settings → Security</em> (or <em>Apps → Special access</em>) and enable <em>Install unknown apps</em> for your browser or file manager.</p>
+    <div class="how-step">
+      <div class="step-num">2</div>
+      <h3>Allow installs</h3>
+      <p>Go to <em>Settings → Security → Install unknown apps</em> and allow your browser app.</p>
     </div>
-    <div class="how-card">
-      <div class="how-num">3</div>
+    <div class="how-step">
+      <div class="step-num">3</div>
       <h3>Open the file</h3>
-      <p>Open your Downloads folder, tap the <em>.apk</em> file, and tap <em>Install</em>. Takes about 10 seconds.</p>
+      <p>Open your Downloads folder, tap the .apk file, then tap <em>Install</em>.</p>
     </div>
-    <div class="how-card">
-      <div class="how-num">4</div>
-      <h3>Open Fleet Apex</h3>
-      <p>Find the app on your home screen or app drawer. Tap it to launch — it's ready to use immediately.</p>
+    <div class="how-step">
+      <div class="step-num">4</div>
+      <h3>Launch</h3>
+      <p>Find Fleet Apex on your home screen or app drawer and tap to open.</p>
     </div>
   </div>
 </div>
 
 <footer>
   <p>⬡ Fleet Apex Intelligent AI OS · <a href="/">Home</a> · <a href="/app">Web App</a> · <a href="https://github.com/kyzelkreates/Fleet-apex-intelligent-ai-os" target="_blank">GitHub</a></p>
-  <p style="margin-top:8px;">APKs are debug builds. Signed release builds available when keystore is configured.</p>
 </footer>
 
 <script>
-// Fetch latest artifact download URLs from our Vercel API proxy
-async function loadDownloadLinks() {
+// ── Direct APK download via server-side proxy ──────────────────────────────
+async function downloadApk(app, btn) {
+  const progressEl = document.getElementById(app + '-progress');
+  const statusEl   = document.getElementById(app + '-status');
+
+  btn.disabled = true;
+  btn.style.opacity = '0.75';
+  progressEl.classList.add('active');
+  statusEl.textContent = 'Preparing download…';
+
   try {
-    const res  = await fetch('/api/artifacts');
-    const data = await res.json();
+    statusEl.textContent = 'Fetching APK from build server…';
+    const res = await fetch(`/api/download?app=${app}`);
 
-    if (data.adminApk) {
-      const btn = document.getElementById('admin-apk-btn');
-      btn.href = data.adminApk.url;
-      btn.innerHTML = `
-        <div class="left">🤖 <span>Android APK — Admin</span></div>
-        <span class="dl-size">${data.adminApk.size}</span>`;
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+      throw new Error(err.error || `Server error ${res.status}`);
     }
 
-    if (data.driverApk) {
-      const btn = document.getElementById('driver-apk-btn');
-      btn.href = data.driverApk.url;
-      btn.innerHTML = `
-        <div class="left">🤖 <span>Android APK — Driver</span></div>
-        <span class="dl-size">${data.driverApk.size}</span>`;
-    }
+    const contentType = res.headers.get('content-type') || '';
+    const filename    = app === 'admin'
+      ? 'FleetApex-Admin-Dashboard.apk'
+      : 'FleetApex-Driver-App.apk';
 
-    if (data.windowsExe) {
-      const btn = document.getElementById('windows-btn');
-      btn.href = data.windowsExe.url;
-      document.getElementById('windows-size').textContent = data.windowsExe.size;
-    } else {
-      document.getElementById('windows-btn').classList.add('btn-coming');
-      document.getElementById('windows-size').textContent = 'Building…';
-    }
+    statusEl.textContent = 'Downloading… (may take a few seconds)';
 
-    if (data.macosDmg) {
-      const btn = document.getElementById('macos-btn');
-      btn.href = data.macosDmg.url;
-      document.getElementById('macos-size').textContent = data.macosDmg.size;
-    } else {
-      document.getElementById('macos-btn').classList.add('btn-coming');
-      document.getElementById('macos-size').textContent = 'Building…';
-    }
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 
-    if (data.linuxDeb) {
-      const btn = document.getElementById('linux-btn');
-      btn.href = data.linuxDeb.url;
-      document.getElementById('linux-size').textContent = data.linuxDeb.size;
-    }
-
-    // Build status
-    const sha = data.latestSha || '';
-    const ts  = data.latestDate ? new Date(data.latestDate).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '';
-    document.getElementById('build-status').textContent =
-      `Latest build ${sha ? '#' + sha.slice(0,7) : ''} · ${ts}`;
+    progressEl.classList.remove('active');
+    statusEl.innerHTML = '✅ Downloaded! Open your Downloads folder to install.';
+    btn.disabled = false;
+    btn.style.opacity = '1';
 
   } catch(e) {
-    document.getElementById('build-status').textContent = 'Build info unavailable — see GitHub for latest';
-    // Fallback: point directly to GitHub releases page
-    const fallback = 'https://github.com/kyzelkreates/Fleet-apex-intelligent-ai-os/releases';
-    ['admin-apk-btn','driver-apk-btn','windows-btn','macos-btn','linux-btn'].forEach(id => {
-      const el = document.getElementById(id);
-      if(el && el.href === location.href + '#') {
-        el.href = fallback;
-        el.target = '_blank';
-      }
-    });
+    progressEl.classList.remove('active');
+    statusEl.innerHTML = `❌ ${e.message} — <a href="https://github.com/kyzelkreates/Fleet-apex-intelligent-ai-os/actions" target="_blank" style="color:var(--accent)">Try GitHub directly</a>`;
+    btn.disabled = false;
+    btn.style.opacity = '1';
   }
 }
 
-loadDownloadLinks();
+// ── Desktop build status ───────────────────────────────────────────────────
+async function loadDesktop() {
+  const container = document.getElementById('desktop-btns');
+  const status    = document.getElementById('desktop-status');
+
+  try {
+    const res  = await fetch('/api/artifacts');
+    const data = await res.json();
+    let html = '';
+
+    if (data.windowsExe) {
+      html += `<a href="${data.windowsExe.url}" target="_blank" class="dl-btn btn-desktop">
+        <div class="left">🪟 <span>Windows Installer (.exe)</span></div>
+        <span class="tag">${data.windowsExe.size}</span></a>`;
+    }
+    if (data.macosDmg) {
+      html += `<a href="${data.macosDmg.url}" target="_blank" class="dl-btn btn-desktop">
+        <div class="left">🍎 <span>macOS DMG (Universal)</span></div>
+        <span class="tag">${data.macosDmg.size}</span></a>`;
+    }
+    if (data.linuxDeb) {
+      html += `<a href="${data.linuxDeb.url}" target="_blank" class="dl-btn btn-desktop">
+        <div class="left">🐧 <span>Linux .deb</span></div>
+        <span class="tag">${data.linuxDeb.size}</span></a>`;
+    }
+    if (!html) {
+      html = `<div style="font-size:.82rem;color:var(--muted);padding:8px 0;">
+        Desktop builds are still compiling. Check back soon or 
+        <a href="https://github.com/kyzelkreates/Fleet-apex-intelligent-ai-os/actions" 
+           target="_blank" style="color:var(--accent)">view on GitHub Actions</a>.
+      </div>`;
+    }
+    container.innerHTML = html;
+  } catch(e) {
+    status.innerHTML = `<span style="color:var(--muted);font-size:.8rem;">Desktop build info unavailable.</span>`;
+  }
+}
+
+loadDesktop();
 </script>
 </body>
 </html>
